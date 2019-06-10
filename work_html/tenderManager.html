@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+
+<link rel="stylesheet" type="text/css" href="testF/michealMedia/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="testF/bootstrap-datetimepicker.min.css" />
+
+<script type="text/javascript" src="testF/michealMedia/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/dist/js/bootstrap.min.js"></script>  
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="testF/micheal_ajax.js"></script>
+</head>
+<style type="text/css">
+ul li{
+    list-style-type:none;
+}
+#flow-step a{
+    text-decoration: none;
+    background-color: #fff;
+    /* background-image: none !important; */
+    /* filter: none !important; */
+    box-shadow: none !important;
+    /* width: auto; */
+    display: block;
+}
+.flow-step .number{
+    display: inline-block !important;
+    font-size: 16px;    
+    font-weight: 300;
+    padding: 12px 15px !important;
+    margin-right: 10px;
+    border-radius: 50% !important;
+    color: #555;
+    background-color: #999;
+}
+.number.two{
+    margin-left: 6px;
+}
+#flow-step .desc{
+    margin-top: 10px;
+    display: block;
+    font-weight: 400;
+    font-size: 14px;
+    border-radius: 0 !important;
+    color: #888;
+}
+.flow-step .number.sel{
+    background-color: #35aa47;
+    color: #fff;
+}
+</style>
+
+<body>
+    <div class="panel panel-info">
+        <div class="panel-heading">投标管理</div>
+        <div class="panel-body">
+            <ul  id="flow-step" class="flow-step row">
+                <li id="step1" class="col-xs-6 col-md-6 " style="text-align:left">
+                    <a href="#flow-step1">
+                    <span style="" class="sel number one">1</span>
+                    <span class="desc">申请单</span>
+                    </a>
+                </li>
+                <li id="step2" class="col-xs-6 col-md-6 ">
+                        <a href="#flow-step2">
+                            <span style="" class="number two">2</span>
+                            <span class="desc">报价清单</span>
+                        </a>
+                </li>
+            </ul>
+            <div class="progress">
+                <div id='flow-progress' class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                  <span class="sr-only">50% Complete (success)</span>
+                </div>
+            </div>
+
+        </div> <!-- panel-body -->
+        
+    <table>
+
+    </table>
+
+</div>
+<script id="step1T" type="text/x-jquery-tmpl">
+    <table>
+        {{each  Name}}
+            <tr>
+                <td>
+                    ${$value}
+                </td>
+                <td>
+                    ${$value}
+                </td>
+            <tr>
+        {{/each}}
+    </table>
+</script>
+<script type="text/javascript">
+    var init = function()
+    {
+        //
+    }
+$('#flow-step li').click(function(){
+            var _temp = parseInt($(this).find('.number').text())
+            var paramers = Mr.getParamers()
+            if (_temp <=parseInt(Mr.sstorage['step']))
+            {
+                // sel 设置选中样式
+                $('#flow-step li .number').removeClass('sel')
+                $(this).find('.number').addClass('sel')
+                $('#flow-progress').attr('style','width:'+_temp*50+'%')
+
+                $('.flow,.well.btn').addClass('hidden')
+                $('#flow-step'+_temp+',.step'+_temp+'-btn').removeClass('hidden')
+            }
+
+        })
+$(function (param) { 
+        var dataSetName = [{Name:['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型',
+        '报价说明','备注','投标单位名称','指定品牌','年度战略合同价格期限(起始)','指定有效截止日期','报价含开发票费用','是否接受银行承兑汇票','银行承兑汇票费用','投标其他说明']}]
+        
+
+    
+    })    
+</script>
+</body>
+</html>

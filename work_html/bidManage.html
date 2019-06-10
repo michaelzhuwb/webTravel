@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" type="text/css" href="testF/michealMedia/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="testF/bootstrap-datetimepicker.min.css" />
+
+<script type="text/javascript" src="testF/michealMedia/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/dist/js/bootstrap.min.js"></script>  
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="testF/micheal_ajax.js"></script>
+
+
+
+<style type="text/css">
+
+.portlet.box.blue .portlet-title {
+    background-color: #4b8df8;
+}
+.portlet.box .portlet-title {
+    padding: 8px 10px 2px;
+    border-bottom: 1px solid #eee;
+    color: #fff !important;
+}
+.portlet.box .portlet-title {
+    margin-bottom: 0;
+}
+
+
+.flow-step .number{
+    display: inline-block !important;
+    font-size: 16px;    
+    font-weight: 300;
+    padding: 12px 15px !important;
+    margin-right: 10px;
+    border-radius: 50% !important;
+    color: #555;
+    background-color: #999;
+}
+#flow-step .desc{
+    margin-top: 10px;
+    display: block;
+    font-weight: 400;
+    font-size: 14px;
+    border-radius: 0 !important;
+    color: #888;
+}
+.flow-step .number.sel{
+    background-color: #35aa47;
+    color: #fff;
+}
+
+#flow-step #step2 a:hover{
+    /* background-color: #35aa47 ; */
+    color: red !important;
+}
+
+#flow-step a{
+    text-decoration: none;
+    background-color: #fff;
+    /* background-image: none !important; */
+    filter: none !important;
+    border: 0;
+    box-shadow: none !important;
+    width: auto;
+    display: block;
+}
+ul li{
+    list-style-type:none;
+}
+
+</style>
+
+
+<body>
+        <script id='attachT' type="text/x-jquery-tmpl">
+            <div class="row">
+                <div class="col-md-3">
+                    <img src="${thumbnail}">
+                </div>
+                <div class="col-md-5">
+                        <a target="_blank" href="${url}">${title}</a>
+                </div>
+                <div class="col-md-3">${file_size}MB</div>
+            </div>            
+
+        </script>
+
+        <script id='matTBT' type="text/x-jquery-tmpl">
+            <tr>
+                    <td>
+                        ${num}
+                    </td>
+                    <td>
+                            ${code}
+                        </td>
+                        <td>
+                                ${mat_name}
+                            </td>
+                            <td>
+                                ${specs}
+                                </td>
+                                <td>
+                                    ${model}
+                                </td>
+                                    <td id="brand_head">
+                                        ${brand}
+                                    </td>
+                                        <td>
+                                            ${sy_specs}
+                                        </td>
+                                            <td>
+                                                    ${sy_qty}
+                                                </td>
+                                                <td>
+                                                        ${use_position}
+                                                </td>
+                                                <td>
+                                                        ${memo}   
+                                                </td>
+                                                <td>
+                                                    <img src="${pic_thumbnail}" alt="${pic_title}">   
+                                                </td>
+                </tr>
+        </script>
+        <script id='flow-step1T' type="text/x-jquery-tmpl">
+            <div id="flow-step1">
+                <table width="100%" style="margin-bottom:20px;text-align:right">
+                    <tr>
+                        <td width="30%" style="padding-right:30px">
+                            {{html name}}:
+                        </td>
+                        <td width='70%' style="marg;text-align:left">
+                            {{html value}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </script>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>           
+            <h3 style="display:inline" class="panel-title"> 投标管理</h3>
+            <span class="step-title">Step 1 of 3</span>
+        </div>
+        <div class="panel-body">
+            <div id="flag" class="">
+                <div class="container-fluid flow-steps">
+                        <ul  id="flow-step" class="flow-step row">
+                            <li id="step1" class="col-xs-6 col-md-6 " style="text-align:left">
+                                <a href="#flow-step1">
+                                <span style="" class="sel number">1</span>
+                                <span class="desc">申请单</span>
+                                </a>
+                            </li>
+                            <li id="step2" class="col-xs-6 col-md-6 ">
+                                    <a href="#flow-step2">
+                                        <span style="" class="number">2</span>
+                                        <span class="desc">报价清单</span>
+                                    </a>
+                            </li>
+                        </ul>
+                </div>
+                
+                <div class="progress">
+                        <div id='flow-progress' class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                          <span class="sr-only">50% Complete (success)</span>
+                        </div>
+                </div>
+
+            <div id="flow-step1" class="flow container-fluid">
+                <div id ="_flow-step1">
+                </div>
+                <div class="panel panel-default" style="">
+                    <div class="panel-heading">材料送样明细表</div>
+                    <div class="panel-body" >
+                        <div id="matstatementT">
+                                <div id="">
+                                    <table class="table table-bordered" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            序号
+                                                        </th>
+                                                        <th>
+                                                                设计编号
+                                                            </th>
+                                                            <th>
+                                                                    材料名称
+                                                                </th>
+                                                                <th>
+                                                                        规格
+                                                                    </th>
+                                                                    <th id="" class="brand_head">
+                                                                            指导型号
+                                                                        </th>
+                                                                        <th id="" class="brand_head">
+                                                                                指导品牌
+                                                                        </th>
+                                                                            <th>
+                                                                                    送样规格尺寸
+                                                                                </th>
+                                                                                <th>
+                                                                                        送样套数
+                                                                                    </th>
+                                                                                    <th>
+                                                                                            使用位置
+                                                                                    </th>
+                                                                                    <th>
+                                                                                            备注   
+                                                                                    </th>
+                                                                                    <th>
+                                                                                            参考确认实物图片   
+                                                                                    </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="matTB">
+
+                                                </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                        <h3>附件列表</h3>
+                        <div class="well">
+                                <div id='attach' class="row">
+
+                                </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="flow-step2" class="flow container-fluid hidden">
+   
+                <ul id="nav-tab" class="nav nav-tabs">
+                </ul>   
+                    <div class="panel panel-default" style="">
+                            <div class="panel-heading">报价清单</div>
+                            <div class="panel-body">
+                                <table id="bjqd" class="table table-bordered">
+                                    <thead> 
+                                        <tr id='head_bjqd'>
+                                        </tr>
+                                    </thead>
+                     
+                                    <!-- <tbody id='body_bjqd'>
+                                        
+                                
+                                    </tbody> -->
+                                </table>
+                            </div>
+                    </div>
+            </div>
+        <script id='brandBjqd' type="text/x-jquery-tmpl">
+            <th>
+                ${name}
+            </th>
+        </script>
+        <script id='brandCBjqd' type="text/x-jquery-tmpl">
+            <tr>
+                <td>
+                    ${name}
+                </td>
+            </tr>
+        </script>
+
+            
+        
+        
+        </div>  <!-- flag-->
+        </div>  <!-- panel-body -->
+       </div>   <!-- pannel -->
+
+        <!-- 按钮组 -->
+        <div class="well btn step1-btn" style="width:100%" >
+            <button id="zancun" type="button" class="btn btn-primary">暂存</button>
+            <button id="next_step" type="button" class="btn btn-success">下一步</button>
+            <button class='back_list' type="button" class="btn btn-default">返回列表</button>
+        </div>
+            <!-- 附件上传 -->
+        <div class="step2-btn flow" style="width:100%">
+            <h4><附件上传</h4><hr> 
+        </div>
+        <div class="well btn step2-btn hidden" style="width:100%">
+                <button id='zancun1' type="button" class="btn btn-primary">暂存</button>
+                <button id='official_send' type="button" class="btn btn-success">正式发送</button>
+                <button class='back_list' type="button" class="btn btn-default">返回列表</button>
+        </div>
+
+        
+
+
+
+    <!-- <div class="portlet box blue" id="form_wizard_1">
+
+        <div class="portlet-title">
+
+            <div class="caption">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                
+                <i class="icon-reorder"></i>
+                <span class="caption-title">投标管理</span>
+                <span class="step-title">Step 1 of 3</span>
+
+            </div>
+
+
+        </div>
+        <div class="portlet-body form">
+
+            <form action="#" class="form-horizontal" id="submit_form">
+
+                <div class="form-wizard">
+
+                    <div class="navbar steps">
+
+                        <div class="navbar-inner">
+
+                            <ul class="row-fluid">
+
+                            
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                    <div id="bar" class="progress progress-success progress-striped"  style="width: 40%" style="width: 40%" aria-valuenow="60" aria-valuemin="0"  aria-valuemax="100" >
+
+                        <div class="bar" style="width:40%"></div>
+
+                    </div>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="form_content">
+
+                            
+
+                        </div>
+
+                    </div>
+
+            
+                </div>
+                
+
+
+            </form>
+
+        </div>
+
+    </div> -->
+ <script type="text/javascript" src="testF/micheal_ajax.js"></script>
+    <script type="text/javascript">
+
+
+        bid_type = {'1':'项目招标','2':'集采招标'}
+        var p_is_sel1,p_is_sel2,p_is_sel3,_yhcdhp
+        // _yhcdhp = 0
+        var _brands = [] // 品牌
+        var _brands_num = [] //品牌数量
+        var __dataSet = []
+        var __dataSetUP=[]
+        fun = function (res) { 
+            console.log(res)
+        var p_is_sel1,p_is_sel2,p_is_sel3
+            res = res['data']
+            // 初始化品牌
+            for(var i=0;i<res['brand'].length;i++)
+                Mr.saveSesstionStorage('brand'+i+'','false')
+
+            var dataSet = []
+            var data = [res['sn'],bid_type['type'],res['proj_name'],res['address'],res['zbfw'],
+                    res['hqyq'],res['kb_time'],res['yuns'],res['upload'],res['fp_type'],
+                    res['bjsm'],res['memo'],res['sup_name']]
+            var _temp_name = ['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型','报价说明','备注','投标单位名称']
+            for (var i=0;i<_temp_name.length;i++){
+                dataSet.push({'name':_temp_name[i],'value':data[i]})
+            }
+            
+            // 品牌
+            var brandCreate = ''
+            var isbrand = false;
+            if (res['ppyq']==1) // 指定品牌
+            {
+                // 隐藏指导品牌
+                $('.brand_head').addClass('hidden')
+                for (var i=0;i<res['brand'].length;i++)
+                {   
+                    var _tdata = res['brand'][i]
+                    var brand_name=_tdata['brand']
+                    var ischecked = 'checked'
+                    if (_tdata['checked']==0)
+                        ischecked = ''
+                    else
+                        _brands.push(brand_name)
+                    brandCreate+="<span><input class='brand' type='checkbox' name='brand' "+ischecked+" value='"+brand_name+"'/>"+" "+brand_name+"</span>"+Mr.Nbsp_Number(10)+"" 
+                }
+            }
+            else{
+                isbrand = true;
+                $('.brand_head').removeClass('hidden')
+                // 不指定品牌在材料明细上显示
+                brandCreate = "<span>"+Mr.Nbsp_Number(5)+'不指定品牌'+"<span>"
+            }
+            // 是否接受银行兑汇票
+            var bankdraft = ""
+            var is_hide = false
+            var _yes = '';var _no='';
+            if (res['yhcdhp']==1)
+                {_yes = "checked='1'"}
+            else if (res['yhcdhp']==0)
+               {
+                _no ="checked='0'"
+                is_hide = true
+               } 
+            else{
+                is_hide = true
+            }
+            bankdraft = "<span><input class='ck' type='radio' value='1' name='ck' "+_yes+"/> 是</span>"+Mr.Nbsp_Number(10)+"<span><input class='ck' value='0' type='radio' name='ck'"+_no+"/> 否</span>"
+            
+            // 银行兑汇票
+            var is_sel1,is_sel2,is_sel3;
+            var hd1='hidden'
+            var hd2='hidden'
+            var hd3='hidden'
+            is_sel1 = (res["is_sel1"]==1)?'checked': ''
+            is_sel2 = (res["is_sel2"]==1)?'checked': ''
+            is_sel3 = (res["is_sel3"]==1)?'checked': ''
+            if (is_sel1)
+                hd1 =''
+            if (is_sel2)
+                hd2 =''            
+            if (is_sel3)
+                hd3 =''
+            bankdraft_value = "<div id='bankdp'>\
+                        <div class='row'><div class='col-md-1'><input   type='checkbox' "+is_sel1+" name='yhdp' value='0' />三个月 </div><div  class='col-md-2 "+hd1+" '><input  class='numberxz yhdp cdhp_per1' style='width:40%' type='text' value='"+((res['cdhp_per1']==null)?'':res['cdhp_per1'])+"'>%</div></div>\
+                        <div class='row'><div class='col-md-1'><input   type='checkbox' "+is_sel2+" name='yhdp' value='1' />半年   </div><div  class='col-md-2 "+hd2+" '><input  class='numberxz yhdp cdhp_per2' style='width:40%' type='text' value='"+((res['cdhp_per2']==null)?'':res['cdhp_per2'])+"'>%</div></div>\
+                        <div class='row'><div class='col-md-1'><input   type='checkbox' "+is_sel3+" name='yhdp' value='2' />一年   </div><div  class='col-md-2 "+hd3+" '><input  class='numberxz yhdp cdhp_per3' style='width:40%' type='text' value='"+((res['cdhp_per3']==null)?'':res['cdhp_per3'])+"'>%</div></div>\
+                                    </div>"
+
+            var _temp_value = [brandCreate,
+                                "<div class='input-append date end form_datetime'>\
+                                    <input class='start_date' size='16' type='text' value='"+((res['start_date']==null)?'':res['start_date'])+"'readonly disable>"+   
+                                    "<span class='add-on'><i class='icon-th glyphicon glyphicon-calendar'></i></span>\
+                                    </div>",
+                                    "<div class='input-append date end form_datetime'>\
+                                    <input class='end_date' size='16' type='text' value='"+((res['end_date']==null)?'':res['end_date'])+"'readonly>"+   
+                                    "<span class='add-on'><i class='icon-th glyphicon glyphicon-calendar'></i></span>\
+                                    </div>",
+                                    '<input style="width:6%" class="numberxz fp_cost" type="text" value="'+((res['fp_cost']==null)?'':res['fp_cost'])+'"/>%',
+                                    bankdraft,
+                                    bankdraft_value,
+                                    "<textarea class='memo1' rows='3' cols='30'>"+((res['memo1']==null)?'':res['memo1'])+"</textarea>"
+                                ]
+            _temp_name = ['指定品牌<span style="color:red">*</span>','年度战略合同价格期限(起始)<span style="color:red">*</span>','指定有效截止日期<span style="color:red">*</span>','报价含开发票费用<span style="color:red">*</span>','是否接受银行承兑汇票<span style="color:red">*</span>','<div class="yhdchp">银行承兑汇票费用<span style="color:red">*</span><div>','投标其他说明']                            
+            for (var i=0;i<_temp_name.length;i++){
+                dataSet.push({'name':_temp_name[i],'value':_temp_value[i]})
+            }
+            $('#flow-step1T').tmpl(dataSet).appendTo('#_flow-step1')
+            // 隐藏显示银行对票比例
+            if (is_hide){
+                $('#bankdp').parent().addClass('hidden') 
+                $('.yhdchp').addClass('hidden') 
+            }
+
+            $('input[name="yhdp"]').click(function () { 
+                var p = $(this).parent().siblings()
+             if ($(this).prop('checked'))
+                {
+                    p.removeClass('hidden')
+                    if ($(this).attr('value')=='0')
+                        p_is_sel1 = '1'
+                    if ($(this).attr('value')=='1')
+                        p_is_sel2 = '1'
+                    if ($(this).attr('value')=='2')
+                        p_is_sel3 = '1'
+                }
+             else{
+                p.addClass('hidden')
+                if ($(this).attr('value')=='0')
+                    p_is_sel1 = '0'
+                if ($(this).attr('value')=='1')
+                    p_is_sel2 = '0'
+                if ($(this).attr('value')=='2')
+                    p_is_sel3 = '0'
+             }
+             })
+            // brand
+             $('input[name="brand"]').click(function(){
+                    if ($(this).prop('checked'))
+                    {   
+                        _brands.push($(this).attr('value'))
+                    }
+                    else{
+                        _brands.pop()
+                    }
+             })
+            // 选择银行对票是|否  先行隐藏
+            if (is_hide)
+            {
+                $('#bankdp').parent().addClass('hidden') 
+                $('.yhdchp').addClass('hidden') 
+            }
+
+            $('.ck').click(function(){
+                if ($(this).attr('value')==0)
+                    {
+                        $('#bankdp').parent().addClass('hidden')
+                        $('.yhdchp').addClass('hidden') 
+                        _yhcdhp=0
+                    }
+                else if($(this).attr('value')==1){
+                    $('#bankdp').parent().removeClass('hidden')
+                    $('.yhdchp').removeClass('hidden') 
+                        _yhcdhp=1
+                }
+            })
+
+            // $('.ck').click()
+            // 限制输入框输入
+            $('.numberxz').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
+            $('.numberxz').attr('onkeyup','Mr.clearNoNum(this)')
+
+            
+
+            $(".form_datetime").datetimepicker({
+                todayHighlight:true,
+                todayBtn: 'linked',
+                keyboardNavigation:true,
+                autoclose:true,
+                language:'zh-CN',
+                format:'yyyy-mm-dd',
+                daysOfWeekHighlighted:'0,6',
+                minView:2
+            }); 
+
+            //view
+            // $('.form_datetime').datetimepicker('remove');
+            
+            
+            // 材料明细表
+            var datas = res['syqd']
+            for (var i=0;i<datas.length;i++)
+            {   
+                datas[i]['num'] = i
+                datas[i]['pic_thumbnail']=datas[i]['pic'][0]['thumbnail']
+            }
+            $("#matTBT").tmpl(datas).appendTo('#matTB')
+            var datas = res['attachs']
+
+            // 附件列表
+            $("#attachT").tmpl(datas).appendTo('#attach')
+
+        // 暂存
+        var a = 1;
+        $('#zancun').click(function (){ 
+            _brands_ = _brands.join(',')
+            Mr.saveSesstionStorage('step','1')
+            url = 'https://e.szby.cn/data_gy/bid/saveQuoteInfo/'
+            param = {
+                'brand':_brands_,
+                'is_sel1':p_is_sel1,
+                'is_sel2':p_is_sel2,
+                'is_sel3':p_is_sel3,
+                'cdhp_per1':$('.cdhp_per1').val(),
+                'cdhp_per2':$('.cdhp_per2').val(),
+                'cdhp_per3':$('.cdhp_per3').val(),
+                'start_date':$('.start_date').val(),
+                'end_date':$('.end_date').val(),
+                'memo1':$('.memo1').val(),
+                'fp_cost':$('.fp_cost').val(),
+                'yhcdhp':_yhcdhp,
+                'pk':1
+            }
+            // console.log(param)
+            // 暂存 下一步 判断输入
+                _flag = true;
+                var _temp = ['brand','fp_cost','start_date','end_date']
+                    if (!param['brand'][0])
+                        _flag = false
+                    for (var i=0;i<_temp.length;i++)
+                    {
+                        if (!param[_temp[i]])
+                            _flag = false
+                    }
+                if (_yhcdhp==1){    // 银行兑汇票 选择是
+                    var _temp = {'is_sel1':'cdhp_per1','is_sel2':'cdhp_per2','is_sel3':'cdhp_per3'}
+                    var _temp_num = 0
+                    for (key in _temp)
+                        if (param[key]=='1')
+                            if (!param[_temp[key]])
+                                {
+                                    _flag = false
+                                    _temp_num +=1
+                                }
+                        else
+                            _temp_num +=1
+                    if (_temp_num==3)
+                        _flag =false
+                }
+                else if (_yhcdhp)
+                {   
+                    _flag = false
+                }
+                if (!_flag){
+                    alert('请输入完整信息！')
+                    return false;
+                }
+            
+            Mr.requestData(url,param,function(res){
+                // console.log(res)
+                window.location.reload();
+
+                
+            })
+         })
+
+         $('#next_step').click(function () { 
+            Mr.saveSesstionStorage('step','2')
+
+            //***
+            url = 'https://e.szby.cn/data_gy/bid/saveQuoteInfo/'
+            _brands_ = _brands.join(',')
+            param= {
+                'brand':_brands_,
+                'is_sel1':p_is_sel1,
+                'is_sel2':p_is_sel2,
+                'is_sel3':p_is_sel3,
+                'cdhp_per1':$('.cdhp_per1').val(),
+                'cdhp_per2':$('.cdhp_per2').val(),
+                'cdhp_per3':$('.cdhp_per3').val(),
+                'start_date':$('.start_date').val(),
+                'end_date':$('.end_date').val(),
+                'memo1':$('.memo1').val(),
+                'yhcdhp':_yhcdhp,
+                'fp_cost':$('.fp_cost').val()
+            }
+            // console.log('next_step')
+            // console.log(param)
+            // 暂存 下一步 判断输入
+            _flag = true;
+                var _temp = ['brand','fp_cost','start_date','end_date']
+                    if (!param['brand'][0])
+                        _flag = false
+                    for (var i=0;i<_temp.length;i++)
+                    {
+                        if (!param[_temp[i]])
+                            _flag = false
+                    }
+                if (_yhcdhp==1){    // 银行兑汇票 选择是
+                    var _temp = {'is_sel1':'cdhp_per1','is_sel2':'cdhp_per2','is_sel3':'cdhp_per3'}
+                    var _temp_num = 0
+                    for (key in _temp)
+                        if (param[key]=='1')
+                            if (!param[_temp[key]])
+                                {
+                                    _flag = false
+                                    _temp_num +=1
+                                }
+                        else
+                            _temp_num +=1
+                    if (_temp_num==3)
+                        _flag =false
+                }
+                else if (_yhcdhp)
+                {   
+                    _flag = false
+                }
+
+                if (!_flag){
+                    alert('请输入完整信息！')
+                    return false;
+                }
+
+                // ****
+            // $('#flow-step #step2').click()  // 切换到第二步报价清单
+            Mr.requestData(url,param,function(res){
+                Mr.saveSesstionStorage('')
+                // 获取信息
+                dic={
+                    'pk':Mr.getParamers()['pk'],
+                    'AccessToken':Mr.sstorage['AccessToken'],
+            }
+                Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteDetail/',dic,_fun)
+            })
+
+         })
+
+         } // fun
+
+
+    Mr.saveSesstionStorage('step',1)
+        // 流程步骤
+        $('#flow-step li').click(function(){
+            var _temp = parseInt($(this).find('.number').text())
+            var paramers = Mr.getParamers()
+            if (_temp <=parseInt(Mr.sstorage['step']))
+            {
+                // sel 设置选中样式
+                $('#flow-step li .number').removeClass('sel')
+                $(this).find('.number').addClass('sel')
+                $('#flow-progress').attr('style','width:'+_temp*50+'%')
+
+                $('.flow,.well.btn').addClass('hidden')
+                $('#flow-step'+_temp+',.step'+_temp+'-btn').removeClass('hidden')
+            }
+
+        })
+        console.log(Mr.getParamers())
+        // 刷新页面 加载数据step1
+        Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteInfo/',{
+                'pk':Mr.getParamers()['pk'],
+                'AccessToken':Mr.sstorage['AccessToken'],
+                'menu_id':'3000006',
+                'mode':'upd',
+            },fun
+        )
+
+
+_fun = function(res){
+        console.log('品牌细节')
+        console.log(res)
+        $('#head_bjqd').empty()
+        $('#flow-step #step2').click()  // 切换到第二步报价清单
+        header = res['header']
+
+        // 记录必填项目
+        var bt_name =[]
+        for (var i=0;i<header.length;i++)
+            if (header[i]['required']==1)
+                bt_name.push(header[i]['id'])
+        Mr.saveSesstionStorage('bt_name',JSON.stringify(bt_name))
+        var names=[]
+        var data = []
+        var _name = [0,0,0,0,0,0,0] // 记录名称对应位置
+        for(var i=0;i<header.length;i++){
+            if (header[i]['type']==1){
+                continue;
+            }
+            var name = header[i]['name']
+            if (name=='材料单价')
+                _name[0]=names.length+2
+            if (name=='安装单价')
+                _name[1]=names.length+2
+            if (name=='数量')
+                _name[2]=names.length+2
+            if (name=='金额')
+                _name[4]=names.length+2
+            if (name=='综合单价')
+                _name[3]=names.length+2
+            if (name=='品牌')
+                _name[5]=names.length+2
+            if (name=='型号')
+                _name[6]=names.length+2
+            names.push({'name':name})
+        }
+        console.log(_name)
+        names.unshift({'name':'序号'})
+        $('#brandBjqd').tmpl(names).appendTo('#head_bjqd')
+        content = res['rows']
+
+        // 设置品牌细节detail
+        brand_flag = 0
+        Mr.saveSesstionStorage('content',JSON.stringify(content))
+        Mr.saveSesstionStorage('_name',JSON.stringify(_name))
+        record_data(content)
+        for(var i=0;i<_brands_num;i++)
+            Mr.saveSesstionStorage('brand'+i+'','false')
+
+        brand_detail(content,_name,brand_flag)
+        $('#zancun1').click(function(){
+            console.log(_brands_num)
+            console.log(__dataSet)
+            url = 'https://e.szby.cn/data_gy/bid/saveQuoteDetail/'
+            pramer = {
+                    'dataset':JSON.stringify(__dataSet),
+                    'pk':Mr.getParamers()['pk'],
+                    'AccessToken':Mr.sstorage['AccessToken'],
+                    'state':'0'
+            }
+            Mr.requestData(url,pramer,function(res){console.log(res)})  
+        })
+        $('#official_send').click(function(){
+            var bt_name = JSON.parse(Mr.sstorage['bt_name'])
+            var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+
+            console.log('__dataSet')
+            console.log(__dataSet)
+            for(var i=0;i<__dataSet.length;i++)
+            {
+                for(var j=0;j<bt_name.length;j++)
+                    {   
+                        if ((__dataSet[i][bt_name[j]].toString()==''))
+                            {
+                                alert('请确保完成所有品牌必填项信息')
+                                // alert(i+','+j)
+                                // console.log(__dataSet[i][bt_name[j]])
+                                return false
+                            }
+                    }
+            }
+
+            console.log(__dataSet)
+            url = 'https://e.szby.cn/data_gy1/bid/saveQuoteDetail/'
+            pramer = {
+                    'dataset':JSON.stringify(__dataSet),
+                    'pk':Mr.getParamers()['pk'],
+                    'AccessToken':Mr.sstorage['AccessToken'],
+                    'state':'1'
+            }
+            Mr.requestData(url,pramer,function(res){console.log(res)})  
+        })
+    } // _fun
+
+    // 设置品牌细节detail
+    brand_detail = function(content,_name,brand_flag){
+        brand_isCreate = Mr.sstorage['brand'+brand_flag+'']
+        // Mr.saveSesstionStorage('brand'+brand_flag+'','true')
+
+        bjqd_body = $('#body_bjqd')
+        tab = $('#nav-tab')
+        tab.empty()
+        bjqd_body.empty()
+        var _num = 0;
+        var azdj = 0;
+        bjqd = $('#bjqd') 
+        __tbody = false
+        if (brand_isCreate!='true')
+        {   
+            __tbody =  true
+        }
+
+        for(var i=0;i<content.length;i++)
+    {   
+        var brand = content[i]['brand']
+        var li = document.createElement('li')
+        li.setAttribute('role','presentation')
+        if (i==brand_flag)
+            li.className='AAA active'
+        li.innerHTML = '<a id="brand'+i+'" class="brand-cg " href="#" value="'+i+'">'+brand+'</a>'
+        tab.append(li)
+
+        if (i==brand_flag){
+ 
+        var tbody = document.createElement('tbody');
+        tbody.className='_brand'+brand_flag+''
+        if (__tbody)
+            bjqd.append(tbody)
+        data1 = content[i]['data']
+        for(var j=0;j<data1.length;j++)
+        {   
+            var zone = data1[j]['zone']
+            var li = document.createElement('tr');
+            data2 = data1[j]['data']
+            li.innerHTML = ('<td colspan="'+data2.length+'"><h4>'+zone+'</h4></td>')
+            tbody.append(li)
+            for(var l=0;l<data2.length;l++)
+            {   
+                datas=data2[l]
+                var li = document.createElement('tr')
+                _temp = ""
+                var _dataSet=[]
+                _sfbazf = false
+                _num++
+                var __t = 0
+                for (var x=0;x<datas.length;x++)
+                {   if (datas[x]==null)
+                        datas[x] = ''
+                    var name = header[x]['name']
+                    var type = header[x]['type']
+                    var required = header[x]['required']
+                    if (type==1&x!=0){
+                        continue
+                        __t++
+                    }
+                    x = x-__t
+                    var readonly = header[x]['readonly']
+                    var id = header[x]['id']
+
+                    var x_ = parseInt($('.AAA.active a').attr('value'))
+                    _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
+                    var __num = 0
+                   if (x_!=0)
+                        __num = x_*_brands_num[x_-1]+_num-1
+                   else
+                        __num = _num -1 
+
+
+
+                    if (x==0)
+                        {
+                            _temp+='<td>'+(l+1)+'</td>'
+                        }
+                    else
+                        {   // 普通文本
+                            if(type==2){
+                                if (name=='数量')
+                                    _temp+='<td  class="sl'+__num+'">'+datas[x]+'</td>'
+                                else
+                                    _temp+='<td>'+datas[x]+'</td>'
+                            }
+                            // 输入框
+                            else if (type==3)
+                            {   
+                                var _readonly = '" '
+                                var value = datas[x]
+                                if (readonly==1)
+                                    _readonly=';background:#999;color:white" readonly  '
+                                if (name=='金额')   // （材料单价+安装单价）*数量
+                                    value=parseInt((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)* parseInt((datas[_name[2]])?(datas[_name[2]]):0)
+                                if (name=='综合单价')
+                                    {
+                                        value=((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)
+                                    }
+                                if (name=='安装单价')
+                                {
+                                    value = (datas[_name[0]])?datas[_name[0]]:0
+                                    _temp+='<td><input _required="'+required+'" temp="'+__num+'" class="sfbazf sfbazf'+__num+'" style="width:70%'+_readonly+' type="text" disable value="'+value+'"></td>'
+                                    azdj = __num
+                                }
+                                else    
+                                    _temp+='<td><input  _required="'+required+'" temp="'+__num+'" class="change'+x+'" style="width:70%'+_readonly+' type="text" value="'+value+'"></td>'
+                            }
+                            else if(type==4){
+                                 if (datas[x]==1)
+                                    {_temp+='<td><input  style="width:70%" type="checkbox" value="1" disabled checked /></td>'
+                                    }
+                                else
+                                    {
+                                        _temp+='<td><input   style="width:70%" type="checkbox" value="0" disabled /></td>'
+                                        _sfbazf = true
+                                    }}
+                            else
+                                // _temp+='<td id= "123" class="pt'+_num+'">'+datas[x]+'</td>'
+                                ___
+                        }
+                }
+                li.innerHTML = _temp
+                tbody.append(li)
+                if (_sfbazf){
+                    $('.sfbazf'+azdj+'').attr('readonly','')
+                    $('.sfbazf'+azdj+'').css('background','#999')
+                    $('.sfbazf'+azdj+'').css('color','white')
+                }
+
+                // 输入框修改事件
+                console.log('_name')
+                console.log(_name)
+
+                $('.change'+_name[0]+',.sfbazf').bind('input propertychange', function() {
+                    __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+                    _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
+
+                    var _num = parseInt($(this).attr('temp')) // 第几个
+                    a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
+                    b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
+                    _value_ = a + b  // 综合单价
+                    $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
+                    c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    _value = c*_value_ // 金额
+                    $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
+                    
+                   var x = parseInt($('.AAA.active a').attr('value'))
+         
+                    __dataSet[_num]['brand']=$('input[temp="'+_num+'"].change'+_name[5]+'').val()
+                    __dataSet[_num]['amount']=_value
+                    __dataSet[_num]['mat_price']=a
+                    __dataSet[_num]['install_price']=b
+                    __dataSet[_num]['total_price']=_value_
+                    __dataSet[_num]['model']=$('input[temp="'+_num+'"].change'+_name[6]+'').val()
+
+                    Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))                    
+
+                })
+            }
+
+        }
+        Mr.saveSesstionStorage('brand'+brand_flag+'','true')
+} //flag_brand
+        $('.brand-cg').click(function(){
+                            _content = JSON.parse(Mr.sstorage['content'])
+                            _name = JSON.parse(Mr.sstorage['_name'])
+                            brand_flag = parseInt($(this).attr('value'))
+                            $('.brand-cg').removeClass('active')
+                            $('#brand'+brand_flag+'').addClass('active')
+                            brand_detail(_content,_name,brand_flag)
+                })
+}
+    // if (__tbody)
+    //     bjqd.append(tbody)
+    for (var _i=0;_i<_brands_num.length;_i++)
+        $('._brand'+_i+'').addClass('hidden')
+    $('._brand'+brand_flag+'').removeClass('hidden')
+
+    // 次序
+    $('.change'+_name[0]+',.sfbazf').bind('input propertychange', function() {
+                    __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+                    _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
+
+                    var _num = parseInt($(this).attr('temp')) // 第几个
+                    a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
+                    b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
+                    _value_ = a + b  // 综合单价
+                    $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
+                    c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    _value = c*_value_ // 金额
+                    $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
+                    
+   
+                    __dataSet[_num]['brand']=$('input[temp="'+_num+'"].change'+_name[5]+'').val()
+                    __dataSet[_num]['amount']=_value
+                    __dataSet[_num]['mat_price']=a
+                    __dataSet[_num]['install_price']=b
+                    __dataSet[_num]['total_price']=_value_
+                    __dataSet[_num]['model']=$('input[temp="'+_num+'"].change'+_name[6]+'').val()
+
+                    Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))                    
+
+                })
+    
+
+    } // brand_detail
+    record_data = function(content){
+        var bt_name = []
+    if (Mr.sstorage['__dataSet'])
+        for(var i=0;i<content.length;i++)
+    {   
+        data1 = content[i]['data']
+        var __num = 0 // 品牌数量
+        for(var j=0;j<data1.length;j++)
+        {   
+            data2 = data1[j]['data']
+            __num +=data2.length
+            for(var l=0;l<data2.length;l++)
+            {   
+                datas=data2[l]
+                var _dataSet=[]
+                var _json = {}
+                for (var x=0;x<datas.length;x++)
+                {   if (datas[x]==null)
+                        datas[x] = ''
+                    var id = header[x]['id']
+                    var type = header[x]['type']
+
+                    if (x==0||x==1)
+                        {
+                            _json[id] = datas[x]
+                            // _dataSet.push(_json)
+                        }
+                    else
+                        {   // 普通文本
+                            if(type==2)
+                                var ___
+                            // 输入框
+                            else if (type==3)
+                            {   
+                                _json[id] = datas[x]
+                                // _dataSet.push(_json)
+                            }
+                            else if(type==1)
+                                var ___
+                            else
+                                var ___
+                        }
+                }
+                __dataSet.push(_json)
+            }
+
+        }
+        if (!Mr.sstorage['brand'+i+''])
+            Mr.saveSesstionStorage('brand'+i+'','false')
+        _brands_num.push(__num)
+        Mr.saveSesstionStorage('_brands_num',JSON.stringify(_brands_num))
+        Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))
+
+
+    }
+    
+    } // record        
+
+
+    </script>
+</body>
+</html>
