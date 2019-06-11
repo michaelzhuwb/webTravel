@@ -80,7 +80,8 @@ ul li{
                   <span class="sr-only">50% Complete (success)</span>
                 </div>
             </div>
-
+        <div id='_flow-step1'>
+        </div>
         </div> <!-- panel-body -->
         
     <table>
@@ -88,6 +89,22 @@ ul li{
     </table>
 
 </div>
+
+<script id='flow-step1T' type="text/x-jquery-tmpl">
+    <div id="flow-step1">
+        <table width="100%" style="margin-bottom:20px;text-align:right">
+            <tr>
+                <td width="30%" style="padding-right:30px">
+                    {{html name}}:
+                </td>
+                <td width='70%' style="marg;text-align:left">
+                    {{html value}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
 <script id="step1T" type="text/x-jquery-tmpl">
     <table>
         {{each  Name}}
@@ -122,12 +139,100 @@ $('#flow-step li').click(function(){
             }
 
         })
-$(function (param) { 
-        var dataSetName = [{Name:['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型',
-        '报价说明','备注','投标单位名称','指定品牌','年度战略合同价格期限(起始)','指定有效截止日期','报价含开发票费用','是否接受银行承兑汇票','银行承兑汇票费用','投标其他说明']}]
-        
+$(function (param) {
+        fun = function(res){ 
+        res = res['data']
 
-    
+        bid_type = {'1':'项目招标','2':'集采招标'}
+
+        var dataSet = []
+        // var dataSetName = [{Name:['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型',
+        // '报价说明','备注','投标单位名称','指定品牌','年度战略合同价格期限(起始)','指定有效截止日期','报价含开发票费用','是否接受银行承兑汇票','银行承兑汇票费用','投标其他说明']}]
+        var data = [res['sn'],bid_type[res['type']],res['proj_name'],res['address'],res['zbfw'],
+                    res['hqyq'],res['kb_time'],res['yuns'],res['upload'],res['fp_type'],
+                    res['bjsm'],res['memo'],res['sup_name'],]
+        var _temp_name = ['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型','报价说明','备注','投标单位名称']
+        
+        for (var i=0;i<_temp_name.length;i++){
+            if (res['type']==2)
+                if (_temp_name[i]=='项目名称' || _temp_name[i]=='工程地点')
+                    continue
+                dataSet.push({'name':_temp_name[i],'value':data[i]})
+            }
+        var brandCreate = ''    // 品牌
+        var start_time = res['start_date']
+        var end_time = res['end_date']
+        var fp_cost = res['fp_cost']
+        bankdraft = '' // 是否接受银行兑汇票
+        var bankdraft_value='' //银行兑汇票
+        var ohter_memo = res['memo1']
+
+        if (res['ppyq']==1) // 指定品牌
+            {   var _brands=[]
+                for (var i=0;i<res['brand'].length;i++)
+                {   
+                    var _tdata = res['brand'][i]
+                    var brand_name=_tdata['brand']
+                    var ischecked = 'checked'
+                    if (_tdata['checked']==0)
+                        ischecked = ''
+                    else
+                        _brands.push(brand_name)
+                    brandCreate+="<span><input class='brand' readonly disable type='checkbox' name='brand' "+ischecked+" value='"+brand_name+"'/>"+" "+brand_name+"</span>"+Mr.Nbsp_Number(10)+"" 
+                }
+            }
+            else{
+                isbrand = true;
+                $('.brand_head').removeClass('hidden')
+                brandCreate = "<span>"+Mr.Nbsp_Number(5)+'不指定品牌'+"<span>"
+            }
+        // 
+        if(res['yhcdhp']==1){
+            bankdraft = '是'
+            var _per1 =''
+            var _per2 =''
+            var _per3 =''
+            if (res['cdhp_per1'])
+                _per1 = "<div class='row'><div class='col-md-1'>三个月:"+res['cdhp_per1']+"%</div></div>"
+            if (res['cdhp_per2'])
+                _per2 = "<br><div class='row'><div class='col-md-1'>半年:"+res['cdhp_per2']+"%</div></div>"
+            if (res['cdhp_per3'])
+                _per3 = "<br><div class='row'><div class='col-md-1'>半年:"+res['cdhp_per3']+"%</div></div>"
+            bankdraft_value ="<div>"+ _per1+_per2+_per3+'</div>'
+        }
+        else
+            bankdraft = '否'
+            res['memo1']
+
+        var _temp_value = [
+            brandCreate,
+            start_time,
+            end_time,
+            fp_cost,
+            bankdraft,
+            bankdraft_value,
+            ohter_memo
+        ]
+        _temp_name = ['指定品牌<span style="color:red">*</span>','年度战略合同价格期限(起始)<span style="color:red">*</span>','指定有效截止日期<span style="color:red">*</span>','报价含开发票费用<span style="color:red">*</span>','是否接受银行承兑汇票<span style="color:red">*</span>','<div class="yhdchp">银行承兑汇票费用<span style="color:red">*</span><div>','投标其他说明']                            
+        for (var i=0;i<_temp_name.length;i++){
+                if (bankdraft=='否')
+                    if(_temp_name[i].search('银行承兑汇票费用')!=-1)
+                        continue
+                dataSet.push({'name':_temp_name[i],'value':_temp_value[i]})
+            }
+
+        $('#flow-step1T').tmpl(dataSet).appendTo('#_flow-step1')
+        console.log(res)
+    } // fun
+    Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteInfo/',{
+                'pk':Mr.getParamers()['pk'],
+                // 'AccessToken':Mr.sstorage['AccessToken'],
+                'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
+                'menu_id':'3000006',
+                'mode':'view',
+            },fun
+        )
+
     })    
 </script>
 </body>

@@ -87,7 +87,14 @@ ul li{
                 <div class="col-md-5">
                         <a target="_blank" href="${url}">${title}</a>
                 </div>
-                <div class="col-md-3">${file_size}MB</div>
+                <div class="col-md-3">
+                    {{if file_size<1024}}
+                        ${file_size}bit
+                    {{else (1024*1024)>file_size}} ${parseInt(file_size/1024)}KB
+                    {{else}}
+                        ${parseInt(file_size/(1024*1024))}MB
+                    {{/if}}
+                </div>
             </div>            
 
         </script>
@@ -106,10 +113,10 @@ ul li{
                             <td>
                                 ${specs}
                                 </td>
-                                <td>
+                                <td class="brand_head">
                                     ${model}
                                 </td>
-                                    <td id="brand_head">
+                                    <td class="brand_head">
                                         ${brand}
                                     </td>
                                         <td>
@@ -125,7 +132,11 @@ ul li{
                                                         ${memo}   
                                                 </td>
                                                 <td>
-                                                    <img src="${pic_thumbnail}" alt="${pic_title}">   
+                                                    {{each(i,pic) pic_thumbnail}}
+                                                    <a target="_blank" href="{{= pic.big}}">
+                                                    <img src="{{= pic.small}}" alt="${pic_title}">
+                                                    </a>
+                                                    {{/each}}   
                                                 </td>
                 </tr>
         </script>
@@ -362,32 +373,41 @@ ul li{
  <script type="text/javascript" src="testF/micheal_ajax.js"></script>
     <script type="text/javascript">
 
-
         bid_type = {'1':'项目招标','2':'集采招标'}
         var p_is_sel1,p_is_sel2,p_is_sel3,_yhcdhp
-        // _yhcdhp = 0
+        var _yhcdhp = 0
         var _brands = [] // 品牌
         var _brands_num = [] //品牌数量
         var __dataSet = []
         var __dataSetUP=[]
         fun = function (res) { 
             console.log(res)
-        var p_is_sel1,p_is_sel2,p_is_sel3
             res = res['data']
             // 初始化品牌
-            for(var i=0;i<res['brand'].length;i++)
-                Mr.saveSesstionStorage('brand'+i+'','false')
+            if (Mr.sstorage['step']!=2)
+            for(var ii=0;ii<res['brand'].length;ii++)
+                Mr.saveSesstionStorage('brand'+ii+'','false')
 
             var dataSet = []
-            var data = [res['sn'],bid_type['type'],res['proj_name'],res['address'],res['zbfw'],
+            var data = [res['sn'],bid_type[res['type']],res['proj_name'],res['address'],res['zbfw'],
                     res['hqyq'],res['kb_time'],res['yuns'],res['upload'],res['fp_type'],
                     res['bjsm'],res['memo'],res['sup_name']]
             var _temp_name = ['招标编号','招标类型','项目名称','工程地点','材料招标范围','货期要求','计划开标时间','是否包运输','是否包卸货','材料发票类型','报价说明','备注','投标单位名称']
+            
             for (var i=0;i<_temp_name.length;i++){
+                if (res['type']==2)
+                    if (_temp_name[i]=='项目名称' || _temp_name[i]=='工程地点')
+                        continue
                 dataSet.push({'name':_temp_name[i],'value':data[i]})
             }
             
+            // 选择 yhdhp
+            p_is_sel1 = res['is_sel1']
+            p_is_sel2 = res['is_sel2']
+            p_is_sel3 = res['is_sel3']
+
             // 品牌
+            _yhcdhp = res['yhcdhp']
             var brandCreate = ''
             var isbrand = false;
             if (res['ppyq']==1) // 指定品牌
@@ -488,11 +508,20 @@ ul li{
              else{
                 p.addClass('hidden')
                 if ($(this).attr('value')=='0')
-                    p_is_sel1 = '0'
+                    {
+                        p_is_sel1 = '0'
+                        $('.cdhp_per1').attr('value','')
+                    }
                 if ($(this).attr('value')=='1')
-                    p_is_sel2 = '0'
+                {
+                        p_is_sel2 = '0'
+                        $('.cdhp_per2').attr('value','')
+                    }
                 if ($(this).attr('value')=='2')
-                    p_is_sel3 = '0'
+                {
+                        p_is_sel3 = '0'
+                        $('.cdhp_per3').attr('value','')
+                    }
              }
              })
             // brand
@@ -517,12 +546,22 @@ ul li{
                     {
                         $('#bankdp').parent().addClass('hidden')
                         $('.yhdchp').addClass('hidden') 
+                        $('.cdhp_per1').attr('value','')
+                        $('.cdhp_per2').attr('value','')
+                        $('.cdhp_per3').attr('value','')
+                        $('input[name="yhdp"]input[type="checkbox"]').removeAttr("checked");
+                        p_is_sel1 = '0'
+                        p_is_sel2 = '0'
+                        p_is_sel3 = '0'
                         _yhcdhp=0
+                        $('.yhdp').parent().addClass('hidden')
+
                     }
                 else if($(this).attr('value')==1){
                     $('#bankdp').parent().removeClass('hidden')
                     $('.yhdchp').removeClass('hidden') 
-                        _yhcdhp=1
+                    // $('.yhdp').parent().removeClass('hidden')
+                    _yhcdhp=1
                 }
             })
 
@@ -553,11 +592,22 @@ ul li{
             for (var i=0;i<datas.length;i++)
             {   
                 datas[i]['num'] = i
-                datas[i]['pic_thumbnail']=datas[i]['pic'][0]['thumbnail']
+                datas[i]['pic_thumbnail']= []
+                console.log(datas[i]['pic'])
+                for (var j=0;j<datas[i]['pic'].length;j++)
+                    {
+                        datas[i]['pic_thumbnail'].push({small:datas[i]['pic'][j]['thumbnail'],big:datas[i]['pic'][j]['url']})
+                    }
+                console.log(datas[i]['pic_thumbnail'])
             }
             $("#matTBT").tmpl(datas).appendTo('#matTB')
             var datas = res['attachs']
-
+            // 选定品牌 隐藏
+            if (res['ppyq']==1)
+                $('.brand_head').addClass('hidden')
+            else
+                $('.brand_head').removeClass('hidden')
+            
             // 附件列表
             $("#attachT").tmpl(datas).appendTo('#attach')
 
@@ -580,55 +630,23 @@ ul li{
                 'memo1':$('.memo1').val(),
                 'fp_cost':$('.fp_cost').val(),
                 'yhcdhp':_yhcdhp,
-                'pk':1
+                'pk':Mr.getParamers()['pk'],
+                'AccessToken':Mr.sstorage['AccessToken']
             }
-            // console.log(param)
-            // 暂存 下一步 判断输入
-                _flag = true;
-                var _temp = ['brand','fp_cost','start_date','end_date']
-                    if (!param['brand'][0])
-                        _flag = false
-                    for (var i=0;i<_temp.length;i++)
-                    {
-                        if (!param[_temp[i]])
-                            _flag = false
-                    }
-                if (_yhcdhp==1){    // 银行兑汇票 选择是
-                    var _temp = {'is_sel1':'cdhp_per1','is_sel2':'cdhp_per2','is_sel3':'cdhp_per3'}
-                    var _temp_num = 0
-                    for (key in _temp)
-                        if (param[key]=='1')
-                            if (!param[_temp[key]])
-                                {
-                                    _flag = false
-                                    _temp_num +=1
-                                }
-                        else
-                            _temp_num +=1
-                    if (_temp_num==3)
-                        _flag =false
-                }
-                else if (_yhcdhp)
-                {   
-                    _flag = false
-                }
-                if (!_flag){
-                    alert('请输入完整信息！')
-                    return false;
-                }
+            console.log('parame zancun')
+            console.log(param)
             
             Mr.requestData(url,param,function(res){
                 // console.log(res)
-                window.location.reload();
-
-                
+                alert('暂存成功！'); 
+                // window.location.reload();
             })
          })
 
          $('#next_step').click(function () { 
             Mr.saveSesstionStorage('step','2')
 
-            //***
+            //  ***
             url = 'https://e.szby.cn/data_gy/bid/saveQuoteInfo/'
             _brands_ = _brands.join(',')
             param= {
@@ -643,8 +661,14 @@ ul li{
                 'end_date':$('.end_date').val(),
                 'memo1':$('.memo1').val(),
                 'yhcdhp':_yhcdhp,
-                'fp_cost':$('.fp_cost').val()
+                'fp_cost':$('.fp_cost').val(),
+                'pk':Mr.getParamers()['pk'],
+                'AccessToken':Mr.sstorage['AccessToken']
+                // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
             }
+
+            console.log(Mr.getParamers())
+
             // console.log('next_step')
             // console.log(param)
             // 暂存 下一步 判断输入
@@ -689,7 +713,9 @@ ul li{
                 // 获取信息
                 dic={
                     'pk':Mr.getParamers()['pk'],
-                    'AccessToken':Mr.sstorage['AccessToken'],
+                    'AccessToken':Mr.sstorage['AccessToken']
+                // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
+
             }
                 Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteDetail/',dic,_fun)
             })
@@ -700,6 +726,8 @@ ul li{
 
 
     Mr.saveSesstionStorage('step',1)
+    // Mr.saveSesstionStorage('AccessToken','VWdUZnpvTjhpemozRFV2bkh0KzcwcUY2d3FhcExoWmVnRGRTcm8vYk1JZz0gMTU2MDIzNTEyNy4zNCAxOTk4MDMgNjkyZjdmOGI1MTdjODg5NjQ1YWRhNzE4ZTcxMTZjZTM5MWU0ZDMwMg==')
+
         // 流程步骤
         $('#flow-step li').click(function(){
             var _temp = parseInt($(this).find('.number').text())
@@ -721,6 +749,7 @@ ul li{
         Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteInfo/',{
                 'pk':Mr.getParamers()['pk'],
                 'AccessToken':Mr.sstorage['AccessToken'],
+                // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
                 'menu_id':'3000006',
                 'mode':'upd',
             },fun
@@ -779,46 +808,50 @@ _fun = function(res){
 
         brand_detail(content,_name,brand_flag)
         $('#zancun1').click(function(){
-            console.log(_brands_num)
+            update()
+            var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+            console.log('__dataSet')
             console.log(__dataSet)
             url = 'https://e.szby.cn/data_gy/bid/saveQuoteDetail/'
             pramer = {
                     'dataset':JSON.stringify(__dataSet),
                     'pk':Mr.getParamers()['pk'],
                     'AccessToken':Mr.sstorage['AccessToken'],
+                    // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
+
                     'state':'0'
             }
-            Mr.requestData(url,pramer,function(res){console.log(res)})  
+            Mr.requestData(url,pramer,function(res){console.log(res)
+                alert('暂存成功！'); 
+                // window.location.reload();  
+            })
         })
         $('#official_send').click(function(){
             var bt_name = JSON.parse(Mr.sstorage['bt_name'])
             var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
-
+            update()    // 更新数据
             console.log('__dataSet')
             console.log(__dataSet)
-            for(var i=0;i<__dataSet.length;i++)
-            {
-                for(var j=0;j<bt_name.length;j++)
-                    {   
-                        if ((__dataSet[i][bt_name[j]].toString()==''))
-                            {
-                                alert('请确保完成所有品牌必填项信息')
-                                // alert(i+','+j)
-                                // console.log(__dataSet[i][bt_name[j]])
-                                return false
-                            }
-                    }
-            }
-
+            paramer_isok =  inspect()
+            if (!paramer_isok)
+                {
+                    alert('请确保完成所有品牌必填项信息')
+                    return false
+                }
+            console.log('__dataSet')
             console.log(__dataSet)
-            url = 'https://e.szby.cn/data_gy1/bid/saveQuoteDetail/'
+
+            url = 'https://e.szby.cn/data_gy/bid/saveQuoteDetail/'
             pramer = {
                     'dataset':JSON.stringify(__dataSet),
                     'pk':Mr.getParamers()['pk'],
                     'AccessToken':Mr.sstorage['AccessToken'],
                     'state':'1'
             }
-            Mr.requestData(url,pramer,function(res){console.log(res)})  
+            Mr.requestData(url,pramer,function(res){console.log(res)
+                alert('发送成功！'); 
+                // window.location.reload();  
+            })  
         })
     } // _fun
 
@@ -876,6 +909,7 @@ _fun = function(res){
                 for (var x=0;x<datas.length;x++)
                 {   if (datas[x]==null)
                         datas[x] = ''
+                    var __id = header[x]['id']
                     var name = header[x]['name']
                     var type = header[x]['type']
                     var required = header[x]['required']
@@ -917,19 +951,24 @@ _fun = function(res){
                                 if (readonly==1)
                                     _readonly=';background:#999;color:white" readonly  '
                                 if (name=='金额')   // （材料单价+安装单价）*数量
-                                    value=parseInt((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)* parseInt((datas[_name[2]])?(datas[_name[2]]):0)
+                                {    
+                                    // value=parseInt((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)* parseInt((datas[_name[2]])?(datas[_name[2]]):0)
+                                    value = datas[_name[4]]?datas[_name[4]]:0
+                                }
                                 if (name=='综合单价')
                                     {
-                                        value=((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)
+                                        // value=((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)
+                                        value = datas[_name[3]]?datas[_name[3]]:0
+                                        
                                     }
                                 if (name=='安装单价')
                                 {
-                                    value = (datas[_name[0]])?datas[_name[0]]:0
-                                    _temp+='<td><input _required="'+required+'" temp="'+__num+'" class="sfbazf sfbazf'+__num+'" style="width:70%'+_readonly+' type="text" disable value="'+value+'"></td>'
+                                    value = (datas[_name[1]])?datas[_name[1]]:0
+                                    _temp+='<td><input _id="'+__id+'"   _required="'+required+'" temp="'+__num+'" class="change-1 sfbazf sfbazf'+__num+'" style="width:70%'+_readonly+' type="text" disable value="'+value+'"></td>'
                                     azdj = __num
                                 }
                                 else    
-                                    _temp+='<td><input  _required="'+required+'" temp="'+__num+'" class="change'+x+'" style="width:70%'+_readonly+' type="text" value="'+value+'"></td>'
+                                    _temp+='<td><input  _id="'+__id+'"  _required="'+required+'" temp="'+__num+'" class="change'+x+'" style="width:70%'+_readonly+' type="text" value="'+value+'"></td>'
                             }
                             else if(type==4){
                                  if (datas[x]==1)
@@ -952,12 +991,16 @@ _fun = function(res){
                     $('.sfbazf'+azdj+'').css('background','#999')
                     $('.sfbazf'+azdj+'').css('color','white')
                 }
+                for (var _ii=0;_ii<_name.length;_ii++)
+                    $('.change'+_name[_ii]+'').addClass('numberxz-n')
+                $('.change-1').addClass('numberxz-n')
+                $('.numberxz-n').attr('onkeyup','Mr.clearNoNum(this,"5")')
+                // $('.numberxz').attr('onkeyup','Mr.clearNoNum(this)')
 
+                $('input[name]')
                 // 输入框修改事件
-                console.log('_name')
-                console.log(_name)
 
-                $('.change'+_name[0]+',.sfbazf').bind('input propertychange', function() {
+                $('.change'+_name[0]+',.sfbazf,.change'+_name[3]+'').bind('input propertychange', function() {
                     __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
                     _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
 
@@ -965,13 +1008,16 @@ _fun = function(res){
                     a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
                     b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
                     _value_ = a + b  // 综合单价
+                    if (_name[1]==0 && _name[0]==0 )
+                        _value_ =$('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').val()
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
+
                     c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    
                     _value = c*_value_ // 金额
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
                     
-                   var x = parseInt($('.AAA.active a').attr('value'))
-         
+   
                     __dataSet[_num]['brand']=$('input[temp="'+_num+'"].change'+_name[5]+'').val()
                     __dataSet[_num]['amount']=_value
                     __dataSet[_num]['mat_price']=a
@@ -979,25 +1025,32 @@ _fun = function(res){
                     __dataSet[_num]['total_price']=_value_
                     __dataSet[_num]['model']=$('input[temp="'+_num+'"].change'+_name[6]+'').val()
 
-                    Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))                    
+                    Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))                        
 
                 })
             }
 
         }
         Mr.saveSesstionStorage('brand'+brand_flag+'','true')
-} //flag_brand
         $('.brand-cg').click(function(){
-                            _content = JSON.parse(Mr.sstorage['content'])
-                            _name = JSON.parse(Mr.sstorage['_name'])
-                            brand_flag = parseInt($(this).attr('value'))
-                            $('.brand-cg').removeClass('active')
-                            $('#brand'+brand_flag+'').addClass('active')
-                            brand_detail(_content,_name,brand_flag)
-                })
+                        _content = JSON.parse(Mr.sstorage['content'])
+                        _name = JSON.parse(Mr.sstorage['_name'])
+                        brand_flag = parseInt($(this).attr('value'))
+                        $('.brand-cg').removeClass('active')
+                        $('#brand'+brand_flag+'').addClass('active')
+                        brand_detail(_content,_name,brand_flag)
+            })
+
+} //flag_brand
+    $('.brand-cg').click(function(){
+                        _content = JSON.parse(Mr.sstorage['content'])
+                        _name = JSON.parse(Mr.sstorage['_name'])
+                        brand_flag = parseInt($(this).attr('value'))
+                        $('.brand-cg').removeClass('active')
+                        $('#brand'+brand_flag+'').addClass('active')
+                        brand_detail(_content,_name,brand_flag)
+            })
 }
-    // if (__tbody)
-    //     bjqd.append(tbody)
     for (var _i=0;_i<_brands_num.length;_i++)
         $('._brand'+_i+'').addClass('hidden')
     $('._brand'+brand_flag+'').removeClass('hidden')
@@ -1011,8 +1064,12 @@ _fun = function(res){
                     a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
                     b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
                     _value_ = a + b  // 综合单价
+                    if (_name[1]==0 && _name[0]==0 )
+                        _value_ =$('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').val()
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
+
                     c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    
                     _value = c*_value_ // 金额
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
                     
@@ -1080,14 +1137,53 @@ _fun = function(res){
         if (!Mr.sstorage['brand'+i+''])
             Mr.saveSesstionStorage('brand'+i+'','false')
         _brands_num.push(__num)
-        Mr.saveSesstionStorage('_brands_num',JSON.stringify(_brands_num))
-        Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))
-
 
     }
-    
+    Mr.saveSesstionStorage('_brands_num',JSON.stringify(_brands_num))
+    Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))
     } // record        
 
+    update = function(){
+        var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+        current_step =  parseInt($('.AAA.active a').attr('value'))
+        valueSet = $('input[type="text"]input[temp]')
+        console.log(valueSet)
+        console.log(valueSet[0].getAttribute('temp'))
+
+        for (var vt=0;vt<valueSet.length;vt++)
+            {
+                var _temp = valueSet[vt].getAttribute('temp')
+                var id = valueSet[vt].getAttribute('_id')
+                // var value = valueSet[vt].val()
+                value = $('input[_id="'+id+'"]input[temp="'+_temp+'"]').val()
+                // if (id=='model'){
+                //     alert(_value)}
+                __dataSet[_temp][id] = value
+            }
+        console.log('update')
+        console.log(__dataSet)
+        Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))
+    }
+
+    inspect = function(){
+        var bt_name = JSON.parse(Mr.sstorage['bt_name'])
+        var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+        for(var i=0;i<__dataSet.length;i++)
+            {
+                for(var j=0;j<bt_name.length;j++)
+                    {   
+                        if ((__dataSet[i][bt_name[j]].toString()==''))
+                            {
+                                // alert('请确保完成所有品牌必填项信息')
+                                // alert(i+','+j)
+                                // console.log(i+','+j)
+                                // console.log(__dataSet[i][bt_name[j]])
+                                return false
+                            }
+                    }
+            }
+        return true
+    }
 
     </script>
 </body>
