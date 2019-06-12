@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>材料招标管理</title>
+    
+<link rel="stylesheet" type="text/css" href="testF/michealMedia/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="testF/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" type="text/css" href="testF/common.css" />
+
+<script type="text/javascript" src="testF/michealMedia/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="testF/michealMedia/dist/js/bootstrap.min.js"></script>  
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="testF/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="testF/micheal_ajax.js"></script>
+<script type="text/javascript" src="testF/generate_form.js"></script>
+<script type="text/javascript" src="testF/common.js"></script>
+
+
+</head>
+
+
+<body>
+<div id="content">
+
+</div>
+
+<script id='t_prev' type="text/x-jquery-tmpl">
+    <table>
+        {{each (i,m_data) m_Data}}
+            <tr><td>${m_data.m_name}</td>
+                <td>${m_data.m_value}</td></tr>
+        {{/each}}
+    </table>
+</script>
+
+<script>
+$(function(){
+    GNR_Form.template_G($('#content'),[{'desc':'申请单'},{'desc':'other'}],'材料招标管理')
+    Common.init()
+})
+</script>
+<style type="text/css">
+
+</style>
+
+</body>
+</html>

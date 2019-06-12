@@ -1,0 +1,76 @@
+/* ========== */
+/* = 黑体字 = */
+/* ========== */
+
+.fontBlack {
+	font-family: "微软雅黑";
+	color: #000000;
+}
+.bold{
+	font-weight: bold;
+}
+span.required {
+	color: red;
+}
+
+/* ========== */
+/* = 列表角标icon样式 = */
+/* ========== */
+
+.badgeTip {
+	background-color: rgb(18, 138, 208);
+	border-radius: 0;
+	color: white;
+}
+.clear{
+    clear: both;
+}
+.greenBtn{
+	background-color:rgb(26,198,4);
+	color: white;
+}
+[v-cloak]
+{
+   display:none;
+}
+.whiteSpace
+{
+	white-space:pre-wrap !important; 
+}
+/*****绿色按钮颜色*********/
+.mui-btn-success{
+	background-color:rgb(26,198,4);
+	color: white;
+}
+/*******弹出层在滚动页面中始终居中显示*************/
+.mui-popup{
+	position: fixed;
+}
+/********上传证据资料的文字样式设置**************/
+.uploadFile{
+	color: rgb(64,122,255) !important;
+}
+
+/*******雪花加载的样式设置***************/
+#loading
+{
+    position: fixed;
+    top: 45%;
+    z-index: 999;
+    width: 100%;
+}
+
+.faceDiv{
+	/*background-color: red;*/
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	margin-top: 3px;
+
+	/*border-radius: 20px;*/
+	/*设置默认图片*/
+	background: url(images/60x60.gif);
+	margin-right: 5px;
+
+
+}

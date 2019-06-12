@@ -1,0 +1,48 @@
+#departmentUl li {
+	position: relative;list-style: none;
+}  
+
+#departmentUl li.file a{
+	background: url(document.png) 0 0 no-repeat;
+	color: #002446;
+	text-decoration:none;
+	display: block;
+}  
+#departmentUl li input[class="extendCheckbox"],#departmentUl li input[class="extendCheckbox"] .mui-icon{
+	position: absulute;
+	left: 10px;
+	margin-left: 0;opacity: 0;
+	z-index: 2;
+	cursor: pointer;
+	height: 20px;
+	width:18px;
+	top: 8px;
+}  
+#departmentUl input[class="extendCheckbox"] + ul{
+	display: none;
+}  
+#departmentUl input[class="extendCheckbox"] + ul > li {
+	 height: 0; 
+	 overflow: hidden;
+}  
+#departmentUl li label {
+	cursor: pointer;
+	display: block;
+	font-size: 17px;
+	/*background: url(toggle-small-expand.png) no-repeat 0px 1px;*/
+}  
+#departmentUl input[class="extendCheckbox"]:checked + ul {
+	/*background: url(toggle-small.png) 44px 5px no-repeat;*/
+	height: auto;
+	display: block;
+}  
+#departmentUl input[class="extendCheckbox"]:checked + ul > li { 
+	height: auto;
+}
+
+#departmentUl .mui-icon{
+	opacity: 1;
+	font-size: 16px
+}
+
+
