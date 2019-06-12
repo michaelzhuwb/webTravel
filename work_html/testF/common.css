@@ -33,3 +33,6 @@ ul li{
     background-color: #35aa47;
     color: #fff;
 }
+.only_read{
+    width:55%;background:#CCC;border:none;
+}

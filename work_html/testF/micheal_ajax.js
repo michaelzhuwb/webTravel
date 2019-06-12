@@ -65,12 +65,16 @@ var Mr = function(){
         　　obj.value = obj.value.replace(reg,'$1$2.$3'); //只能输入两个小数
     };
     var requestData = function(urlstr,parm,successCallback){
+        asyncs = true
+        if (parm['async'])
+            asyncs = false
+        console.log(asyncs)
         $.ajax({
             type:"POST",
             url:urlstr,
             data:parm,
             dataType: "json",
-            // async:false,    // 同步
+            async:asyncs,    // 同步
             timeout : 120000, //超时时间设置，单位毫秒
             complete:function(res,status){
                 _result=eval("("+res.responseText+")");
@@ -80,6 +84,7 @@ var Mr = function(){
                 }
             },
             success:function(res){
+                saveSesstionStorage('res',JSON.stringify(res))
                 if (successCallback)
                     successCallback(res)
             }

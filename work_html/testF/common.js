@@ -1,4 +1,21 @@
+// 只读
+// style='width:55%;background:#CCC;border:none'
+// $('input[type="text"].only_read').css({"width":"55%","background":"#CCC";"border":"none"})
+
 var Common = function(){
+
+    // 隐藏
+    hidding = function(){
+        $('.is_hide').parent().parent().addClass('hidden')
+    }
+
+    // 只读
+    only_read = function(){
+        $('.only_read').attr('readonly',true)
+        $('.only_read,.disable').attr('onClick','javascript:return false')
+        $('.checked').attr('checked',true)
+    }
+
     // 流程点击后对应选择选择事件 
     step_click = function(){
         $('.step').click(function(){
@@ -24,24 +41,42 @@ var Common = function(){
      }
 
     // 组件
-    // m_element_type 分别对应 0~n  是否禁用【0：true 1：flase】
-    span = function (class_name="",value="") { 
+    // m_element_type 分别对应 0~n  是否禁用【0(选中checked)：true 1：flase】
+    span = function (class_name,value,only_read,is_hide) { 
+        if (is_hide==0)
+            class_name +='is_hide'
         return '<span class="'+class_name+'">'+value+'</span>'
      }
-    input_text = function(class_name="",value=""){
-        return "<input type='text' class='"+class_name+"' value='"+value+"' />"
+    input_text = function(class_name="",value="",only_read,is_hide){
+        if (is_hide==0)
+            class_name +='is_hide'
+        if (only_read=='0')
+            class_name +=' only_read'
+        return "<input  style='width:8%' type='text'  class='"+class_name+"' value='"+value+"' />"
     }
-    input_radio = function(class_name="",value=""){
-        return "<input type='radio' class='"+class_name+"' /> "+value+""
+    input_radio = function(class_name="",value="",only_read,is_hide){
+        if (is_hide==0)
+            class_name +='is_hide'
+        if (only_read==0)
+            class_name +='  disabled disable checked'
+        return "<input  type='radio' class='"+class_name+"' /> "+value+""
     }
-    input_checkbox = function(class_name="",value=""){
+    input_checkbox = function(class_name="",value="",only_read,is_hide){
+        if (is_hide==0)
+            class_name +='is_hide'
+        if (only_read==0)
+            class_name +='  disabled disable checked'
         return "<input type='checkbox' class='"+class_name+"' /> "+value+""
     }
-    textarea = function(class_name="",placeholder="",row=3,col=20){
+    textarea = function(class_name="",placeholder="",only_read,is_hide,row=3,col=20){
+        if (is_hide==0)
+            class_name +='is_hide'
         return "<textarea class='"+class_name+"' rows='"+row+"' cols='"+col+"' placeholder='"+placeholder+"'></textarea>" 
     }
-    datetimer = function(class_name="",value=""){
-        "<div class='input-append date end form_datetime'>\
+    datetimer = function(class_name="",value="",only_read,is_hide){
+        // if (is_hide==0)
+        //     class_name +='is_hide'
+        return "<div class='input-append date end form_datetime'>\
                                     <input class='"+class_name+"' size='16' type='text' value='"+value+"'readonly disable>"+   
                                     "<span class='add-on'><i class='icon-th glyphicon glyphicon-calendar'></i></span>\
                                     </div>"
@@ -49,24 +84,31 @@ var Common = function(){
     }
 
     // 选择对应控件
-    sel_control = function(class_name="",value="",c_type,is_disable="")
+    sel_control = function(class_name="",value="",c_type,is_disable,is_hide)
     {
         if (c_type==0)
-            return span(class_name,value)
+            return span(class_name,value,is_disable,is_hide)
         if (c_type==1)
-            return input_text(class_name,value)
+            return input_text(class_name,value,is_disable,is_hide)
         if (c_type==2)
-            return input_radio(class_name,value)
+            return input_radio(class_name,value,is_disable,is_hide)
         if (c_type==3)
-            return input_checkbox(class_name,value,c_type,is_disable)
+            return input_checkbox(class_name,value,is_disable,is_hide)
         if (c_type==4)
-            return textarea(class_name,value)
+            return textarea(class_name,value,is_disable,is_hide)
         if (c_type==5)
-            return textarea(class_name,value)      
+            return datetimer(class_name,value,is_disable,is_hide)      
     }
     return{
         init : function(){
             step_click(); // 流程点击后对应选择选择事件 
+            active_datetimer();
+            only_read();
+            hidding();
+            
+        },
+        sel_control:function(class_name,value,c_type,is_disable,is_hide){
+            return sel_control(class_name,value,c_type,is_disable,is_hide)
         }
     };
 }();

@@ -29,17 +29,20 @@
 </div>
 
 <script id='t_prev' type="text/x-jquery-tmpl">
-    <table>
-        {{each (i,m_data) m_Data}}
-            <tr><td>${m_data.m_name}</td>
-                <td>${m_data.m_value}</td></tr>
-        {{/each}}
-    </table>
+    <div class="">
+        <table width="100%" style="margin-bottom:20px;text-align:right">
+            {{each(i,m_datas) m_Data}}
+                <tr style"padding-bottom:20px"><td width="30%" style="padding-top:7px;padding-bottom:7px;padding-right:30px"> ${m_datas.m_name}</td>
+                    <td width='70%' style="marg;text-align:left">{{html m_datas.m_value}}</td></tr>
+            {{/each}}
+        </table>
+    </div>
 </script>
 
 <script>
 $(function(){
     GNR_Form.template_G($('#content'),[{'desc':'申请单'},{'desc':'other'}],'材料招标管理')
+    GNR_Form.init()
     Common.init()
 })
 </script>
