@@ -27,24 +27,176 @@
 <div id="content">
 
 </div>
-
+<!-- 前表单 -->
 <script id='t_prev' type="text/x-jquery-tmpl">
     <div class="">
         <table width="100%" style="margin-bottom:20px;text-align:right">
             {{each(i,m_datas) m_Data}}
                 <tr style"padding-bottom:20px"><td width="30%" style="padding-top:7px;padding-bottom:7px;padding-right:30px"> ${m_datas.m_name}</td>
-                    <td width='70%' style="marg;text-align:left">{{html m_datas.m_value}}</td></tr>
+                    <td width='70%' style="text-align:left">{{html m_datas.m_value}}</td></tr>
             {{/each}}
         </table>
     </div>
 </script>
+<!-- 后表单 材料明细表 -->
+<script id='t_mat' type="text/x-jquery-tmpl">
+    <table class="table table-bordered" style="text-align:center" >
+        <thead>
+            <tr>
+            {{each m_Head}}
+                <th style="text-align:center">
+                    ${$value}
+                </th>
+            {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+                {{each(i,m_Data) m_matRows}}
+                <tr>
+                    {{each m_Data.m_data}}
+                    <td>
+                        <!-- ${$value} -->
+                        {{html $value}}
+                    </td>
+                    {{/each}}
+                </tr>
+             {{/each}}
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-md-1" style="text-align:right">
+            合计
+        </div>
+        <div class="col-md-1 m_yb_amount" style="text-align:center;border:0.5px solid;float:right;margin-right:65px">
+            议标后金额合计
+        </div>
+        <div class="col-md-1 m_src_amount" style="text-align:center;border:0.5px solid;float:right;margin-right:330px">
+                原始金额合计
+        </div>
+    </div>
+</script>
+<!-- <td>{{html m_matrow.m_data}}</td> -->
+
 
 <script>
 $(function(){
-    GNR_Form.template_G($('#content'),[{'desc':'申请单'},{'desc':'other'}],'材料招标管理')
+    GNR_Form.template_G($('#content'),[{'desc':'申请单'},{'desc':'other'}],'材料招标管理',false)
     GNR_Form.init()
     Common.init()
-})
+
+    // 监听议标后金额
+    m_yb_fun = function(){
+        // 修改浮动比例
+        if ($(this).attr('class').search('F11')!=-1)
+        {
+            float_num =  1 - (((parseFloat($('.F11').val()))?parseFloat($('.F11').val()):0)/100)
+            var ms_obj = $('.yb_total_price')
+            var ms
+            for (var i=0;i<ms_obj.length;i++)
+            {   
+                temp = $(ms_obj[i]).attr('temp')
+                src_price = parseFloat($(ms_obj[i]).attr('src_price'))
+                _total_price = src_price*float_num
+                _total_price = _total_price.toString()
+                if (_total_price.indexOf('.')!=-1)
+                    _total_price = _total_price.slice(0,(_total_price.indexOf('.')+5))
+
+                $(ms_obj[i]).attr('value',_total_price)
+
+                m_value = (($(ms_obj[i]).val())?parseFloat($(ms_obj[i]).val()):0) * float_num * parseFloat($(ms_obj[i]).attr('mat_num'))
+                m_value = m_value.toString()
+                if (m_value.indexOf('.')!=-1)
+                    m_value = m_value.slice(0,(m_value.indexOf('.')+5))
+                $('input[temp="'+temp+'"].yb_amount').attr('value',m_value)
+            }
+            
+        }
+        else
+        {
+            float_num =  1 - (((parseFloat($('.F11').val()))?parseFloat($('.F11').val()):0)/100)
+            temp = $(this).attr('temp')
+            m_value = parseFloat($(this).val()) * float_num * parseFloat($(this).attr('mat_num'))
+            m_value = m_value.toString()
+            if (m_value.indexOf('.')!=-1)
+                m_value = m_value.slice(0,(m_value.indexOf('.')+5))
+            $('input[temp="'+temp+'"].yb_amount').attr('value',m_value)
+        }
+        // 议标后金额
+        var m_src_total_amount = 0.0
+        m_all_price  =  $('.yb_amount')
+        for (var i=0;i<m_all_price.length;i++)
+        {   
+            m_src_total_amount+=parseFloat($(m_all_price[i]).val())?parseFloat($(m_all_price[i]).val()):0
+        }
+        m_src_total_amount = m_src_total_amount.toString()
+        if (m_src_total_amount.indexOf('.')!=-1)
+            m_src_total_amount = m_src_total_amount.slice(0,(m_src_total_amount.indexOf('.')+5))
+    $('.m_yb_amount').html(''+m_src_total_amount+'')
+
+    }
+    m_obj = $('.yb_total_price,.F11')
+    Common.input_monitor(m_obj,m_yb_fun);
+
+
+    // 原始金额合计
+    var m_src_total_amount = 0.0
+    m_all_price  =  $('.yb_total_price')
+    for (var i=0;i<m_all_price.length;i++)
+        {   
+            console.log(m_all_price['i'])
+            m_src_total_amount+=parseFloat($(m_all_price[i]).attr('mat_num'))*parseFloat($(m_all_price[i]).attr('src_price'))
+        }
+    $('.m_src_amount').html(''+m_src_total_amount+'')
+    
+    // 限制数字小数点
+    $('.yb_total_price,yb_amount').attr('onkeyup','Mr.clearNoNum(this)')
+    $('.F11').attr('xznum','2')
+    $('.F11').attr('onkeyup','Mr.clearNoNum(this)')
+    $('.F11').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
+    $('.F11').parent().append('%')
+
+    // 打包数据
+    uppack = function(){
+        m_uppack_head = JSON.parse(Mr.sstorage['m_uppack_head'])
+        m_id_zb_mixid = JSON.parse(Mr.sstorage['m_id_zb_mixid'])   // [[ID,ZBMXID]]
+
+        data1 = Mr.uppack_data($('.yb_total_price ')) // 议标综合单价
+        data2 = Mr.uppack_data($('.yb_amount'))         // 金额
+        dataSet = []
+        for (var i=0;i<data1.length;i++)
+        {   
+            id = m_uppack_head[0]
+            mxid = m_uppack_head[1]
+            yb_price = m_uppack_head[2]
+            yb_amount = m_uppack_head[3]
+            var m_data = {
+                id:m_id_zb_mixid[i][0],
+                mxid:m_id_zb_mixid[i][1],
+                yb_price:data1[i],
+                yb_amount:data2[i]
+            }
+            dataSet.push(m_data)
+        }
+        alert($('.F12').val())
+        param ={
+            'dataSet':JSON.stringify(dataSet),
+            'pk':Mr.getParamers()['pk'],
+            'float_per':$('.F11').val(),
+            'float_memo':$('.F12').val()
+        }
+        return param
+
+    }
+
+    //# next_step
+    $('#next_step').click(function(){
+        param = uppack()
+        console.log('param')
+        console.log(param)
+
+    })
+
+}) // fun_ready
 </script>
 <style type="text/css">
 

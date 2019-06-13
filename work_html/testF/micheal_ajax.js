@@ -6,6 +6,16 @@ var Mr = function(){
     // $('').append(li)
     // JSON.stringify JSON.parse
 
+    // 打包数据(相同class列的数据 input)
+    uppack_data = function(obj){
+        var m_data = []
+        for (var i=0;i<obj.length;i++)
+        {
+            m_data.push($(obj[i]).attr('value'))
+        }
+        return m_data
+    }
+
     var getParamers = function(){
         // var _t = window.location.search.substring(1)
         var _t = window.location.search.substring(1).replace('#','');
@@ -49,13 +59,16 @@ var Mr = function(){
         // alert(sstr)
         return sstr
      }
-
+     // 限制长度
+    //  $('.').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
      var clearNoNum = function(obj){
             
             if (obj.getAttribute('_id'))
                 n = 20
-            else
+            else if (obj.getAttribute('xznum'))
                 n = 3
+            else
+                n=5
             // alert(n)
         　　obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
         　　obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字而不是
@@ -105,6 +118,9 @@ var Mr = function(){
         Nbsp_Number:function(value){  return Nbsp_Number(value) },
         clearNoNum:function(obj){ clearNoNum(obj)},
         getParamers:function () { return getParamers() },
-        sstorage:sstorage
+        sstorage:sstorage,
+        uppack_data:function(obj){
+            return uppack_data(obj);
+        }
     };
 }();

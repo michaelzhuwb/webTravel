@@ -36,3 +36,6 @@ ul li{
 .only_read{
     width:55%;background:#CCC;border:none;
 }
+.full_width{
+    width: 50% !important;
+}

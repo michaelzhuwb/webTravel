@@ -40,8 +40,16 @@ var Common = function(){
         }); 
      }
 
+    // 输入框监听事件
+    input_monitor = function(obj,monitor_fun){
+        obj.bind('input propertychange', monitor_fun)
+    }
+
+
+
     // 组件
     // m_element_type 分别对应 0~n  是否禁用【0(选中checked)：true 1：flase】
+    //      [classname,value,only_read,is_hide] = [类名，值，0:只读|1:可修改,0:隐藏|1:显示]
     span = function (class_name,value,only_read,is_hide) { 
         if (is_hide==0)
             class_name +='is_hide'
@@ -51,7 +59,7 @@ var Common = function(){
         if (is_hide==0)
             class_name +='is_hide'
         if (only_read=='0')
-            class_name +=' only_read'
+            class_name +=" only_read"
         return "<input  style='width:8%' type='text'  class='"+class_name+"' value='"+value+"' />"
     }
     input_radio = function(class_name="",value="",only_read,is_hide){
@@ -102,13 +110,16 @@ var Common = function(){
     return{
         init : function(){
             step_click(); // 流程点击后对应选择选择事件 
-            active_datetimer();
-            only_read();
-            hidding();
+            // active_datetimer();  // 激活日期控件
+            only_read();    // 只读
+            hidding();  // 隐藏
             
         },
         sel_control:function(class_name,value,c_type,is_disable,is_hide){
             return sel_control(class_name,value,c_type,is_disable,is_hide)
+        },
+        input_monitor:function(obj,monitor_fun){
+            input_monitor(obj,monitor_fun);
         }
     };
 }();
