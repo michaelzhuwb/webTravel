@@ -13,12 +13,15 @@
 <script type="text/javascript" src="testF/michealMedia/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="testF/michealMedia/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="testF/michealMedia/dist/js/bootstrap.min.js"></script>  
-<script type="text/javascript" src="testF/bootstrap-datetimepicker.min.js"></script>
+<!-- <script type="text/javascript" src="testF/bootstrap-datetimepicker.min.js"></script> -->
 <script type="text/javascript" src="testF/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript" src="testF/micheal_ajax.js"></script>
 <script type="text/javascript" src="testF/generate_form.js"></script>
 <script type="text/javascript" src="testF/common.js"></script>
+<script type="text/javascript" src="testF/jquery.validate.min.js"></script>
+<script type="text/javascript" src="testF/messages_zh.min.js"></script>
 
+<!-- <script type="text/javascript" src="testF/michealMedia/js/bootstrap.min.js"></script> -->
 
 </head>
 
@@ -152,13 +155,16 @@ $(function(){
     $('.yb_total_price,yb_amount').attr('onkeyup','Mr.clearNoNum(this)')
     $('.F11').attr('xznum','2')
     $('.F11').attr('onkeyup','Mr.clearNoNum(this)')
-    $('.F11').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
+    $('.F11').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100') // 长度
     $('.F11').parent().append('%')
 
     // 打包数据
     uppack = function(){
         m_uppack_head = JSON.parse(Mr.sstorage['m_uppack_head'])
         m_id_zb_mixid = JSON.parse(Mr.sstorage['m_id_zb_mixid'])   // [[ID,ZBMXID]]
+
+        console.log('unpack_head:')
+        console.log(m_uppack_head)
 
         data1 = Mr.uppack_data($('.yb_total_price ')) // 议标综合单价
         data2 = Mr.uppack_data($('.yb_amount'))         // 金额
@@ -170,19 +176,21 @@ $(function(){
             yb_price = m_uppack_head[2]
             yb_amount = m_uppack_head[3]
             var m_data = {
-                id:m_id_zb_mixid[i][0],
-                mxid:m_id_zb_mixid[i][1],
-                yb_price:data1[i],
-                yb_amount:data2[i]
+                [id]:m_id_zb_mixid[i][0],
+                [mxid]:m_id_zb_mixid[i][1],
+                [yb_price]:data1[i],
+                [yb_amount]:data2[i]
             }
             dataSet.push(m_data)
         }
-        alert($('.F12').val())
         param ={
-            'dataSet':JSON.stringify(dataSet),
+            'dataset':JSON.stringify(dataSet),
             'pk':Mr.getParamers()['pk'],
             'float_per':$('.F11').val(),
-            'float_memo':$('.F12').val()
+            'float_memo':$('.F12').val(),
+            'AccessToken':Mr.sstorage['AccessToken'],
+            'sup_id':Mr.getParamers()['sup_id'],
+            'brand':decodeURI(Mr.getParamers()['brand'])
         }
         return param
 
@@ -190,10 +198,30 @@ $(function(){
 
     //# next_step
     $('#next_step').click(function(){
+        // 判断必填项目
+        m_yb_p = $('.yb_total_price ')
+        flag = true
+        for (var i=0;i<m_yb_p.length;i++)
+        {
+            if ($(m_yb_p[i]).val()=='')
+                flag = false
+        }
+        if ($('.F11').val()=='')
+            flag = false
+        if (!flag)
+        {
+            alert('请输入完整信息')
+            return false
+        }
         param = uppack()
         console.log('param')
         console.log(param)
-
+        url = 'https://lw.szby.cn/data/bid/saveQuoteInfo/'
+        Mr.requestData(url,param,function(res){
+            console.log(res)
+            alert('保存成功')
+            history.go(-1) // 倒退
+        })
     })
 
 }) // fun_ready

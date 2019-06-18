@@ -16,7 +16,7 @@ var Common = function(){
         $('.checked').attr('checked',true)
     }
 
-    // 流程点击后对应选择选择事件 
+    // 流程点击后对应选择选择事件 颜色更改
     step_click = function(){
         $('.step').click(function(){
             var _temp = parseInt($(this).find('.stepNum').text())-1
@@ -90,6 +90,18 @@ var Common = function(){
                                     </div>"
 
     }
+
+    // 新模式控件 .6.17
+    input = function (class_name,property="",type='text') {
+        _temp = "<input type='"+type+"' class='"+class_name+"' "+property+" />"
+        return _temp
+      }
+
+
+    // 组合控件 
+    group_control = function(){
+        
+      } 
 
     // 选择对应控件
     sel_control = function(class_name="",value="",c_type,is_disable,is_hide)

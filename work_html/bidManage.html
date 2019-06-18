@@ -90,9 +90,9 @@ ul li{
                 <div class="col-md-3">
                     {{if file_size<1024}}
                         ${file_size}bit
-                    {{else (1024*1024)>file_size}} ${parseInt(file_size/1024)}KB
+                    {{else (1024*1024)>file_size}} ${parseFloat(file_size/1024)}KB
                     {{else}}
-                        ${parseInt(file_size/(1024*1024))}MB
+                        ${parseFloat(file_size/(1024*1024))}MB
                     {{/if}}
                 </div>
             </div>            
@@ -430,6 +430,7 @@ ul li{
                 isbrand = true;
                 $('.brand_head').removeClass('hidden')
                 // 不指定品牌在材料明细上显示
+                _brands.push('不指定品牌')
                 brandCreate = "<span>"+Mr.Nbsp_Number(5)+'不指定品牌'+"<span>"
             }
             // 是否接受银行兑汇票
@@ -446,7 +447,8 @@ ul li{
             else{
                 is_hide = true
             }
-            bankdraft = "<span><input class='ck' type='radio' value='1' name='ck' "+_yes+"/> 是</span>"+Mr.Nbsp_Number(10)+"<span><input class='ck' value='0' type='radio' name='ck'"+_no+"/> 否</span>"
+            bankdraft = "<span><input class='ck' type='radio' value='1'  name='ck' "+_yes+"/> 是</span>"+Mr.Nbsp_Number(10)+"<span><input class='ck'  value='0' type='radio' name='ck'"+_no+"/> 否</span>"
+            
             
             // 银行兑汇票
             var is_sel1,is_sel2,is_sel3;
@@ -467,7 +469,12 @@ ul li{
                         <div class='row'><div class='col-md-1'><input   type='checkbox' "+is_sel2+" name='yhdp' value='1' />半年   </div><div  class='col-md-2 "+hd2+" '><input  class='numberxz yhdp cdhp_per2' style='width:40%' type='text' value='"+((res['cdhp_per2']==null)?'':res['cdhp_per2'])+"'>%</div></div>\
                         <div class='row'><div class='col-md-1'><input   type='checkbox' "+is_sel3+" name='yhdp' value='2' />一年   </div><div  class='col-md-2 "+hd3+" '><input  class='numberxz yhdp cdhp_per3' style='width:40%' type='text' value='"+((res['cdhp_per3']==null)?'':res['cdhp_per3'])+"'>%</div></div>\
                                     </div>"
-
+            
+            // 投标其他说明
+            memo1 ="<textarea class='memo1' rows='3' cols='30'>"+((res['memo1']==null)?'':res['memo1'])+"</textarea>"
+            if (Mr.getParamers()['mode']=='view')
+                memo1 ="<span class='memo1' >"+((res['memo1']==null)?'':res['memo1'])+"</span>"
+                                    
             var _temp_value = [brandCreate,
                                 "<div class='input-append date end form_datetime'>\
                                     <input class='start_date' size='16' type='text' value='"+((res['start_date']==null)?'':res['start_date'])+"'readonly disable>"+   
@@ -480,13 +487,24 @@ ul li{
                                     '<input style="width:6%" class="numberxz fp_cost" type="text" value="'+((res['fp_cost']==null)?'':res['fp_cost'])+'"/>%',
                                     bankdraft,
                                     bankdraft_value,
-                                    "<textarea class='memo1' rows='3' cols='30'>"+((res['memo1']==null)?'':res['memo1'])+"</textarea>"
+                                    
                                 ]
             _temp_name = ['指定品牌<span style="color:red">*</span>','年度战略合同价格期限(起始)<span style="color:red">*</span>','指定有效截止日期<span style="color:red">*</span>','报价含开发票费用<span style="color:red">*</span>','是否接受银行承兑汇票<span style="color:red">*</span>','<div class="yhdchp">银行承兑汇票费用<span style="color:red">*</span><div>','投标其他说明']                            
             for (var i=0;i<_temp_name.length;i++){
                 dataSet.push({'name':_temp_name[i],'value':_temp_value[i]})
             }
             $('#flow-step1T').tmpl(dataSet).appendTo('#_flow-step1')
+
+            // if view
+            if (Mr.getParamers()['mode']=='view')
+            {
+                $('.ck').attr('disabled',true)
+                $('.numberxz').attr('disabled',true)
+                $('.brand').attr('disabled',true)
+            }
+
+
+            
             // 隐藏显示银行对票比例
             if (is_hide){
                 $('#bankdp').parent().addClass('hidden') 
@@ -570,8 +588,7 @@ ul li{
             $('.numberxz').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
             $('.numberxz').attr('onkeyup','Mr.clearNoNum(this)')
 
-            
-
+            if (Mr.getParamers()['mode']=='upd')    // view 模式不激活时间选择框
             $(".form_datetime").datetimepicker({
                 todayHighlight:true,
                 todayBtn: 'linked',
@@ -611,6 +628,10 @@ ul li{
             // 附件列表
             $("#attachT").tmpl(datas).appendTo('#attach')
 
+
+        $('.back_list').click(function(){
+            history.go(-1)
+        })
         // 暂存
         var a = 1;
         $('#zancun').click(function (){ 
@@ -643,6 +664,7 @@ ul li{
             })
          })
 
+
          $('#next_step').click(function () { 
             Mr.saveSesstionStorage('step','2')
 
@@ -666,35 +688,51 @@ ul li{
                 'AccessToken':Mr.sstorage['AccessToken']
                 // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
             }
-
-            console.log(Mr.getParamers())
+            console.log('param')
+            console.log(param)
 
             // console.log('next_step')
             // console.log(param)
             // 暂存 下一步 判断输入
             _flag = true;
+            $('.error').remove()
                 var _temp = ['brand','fp_cost','start_date','end_date']
-                    if (!param['brand'][0])
-                        _flag = false
+
                     for (var i=0;i<_temp.length;i++)
                     {
                         if (!param[_temp[i]])
-                            _flag = false
+                            {
+                                _flag = false
+                                if (_temp[i]=='brand')
+                                    $('.brand').parent().parent().append('<span class="error"style="color:red">请选择品牌</span>')
+                                else if (_temp[i]=='fp_cost')
+                                    $('.fp_cost').parent().append('<span class="error"style="color:red">请输入发票费用</span>')
+                                else if (_temp[i]=='start_date')
+                                    $('.start_date').parent().append('<span class="error"style="color:red">请选择日期</span>')
+                                else
+                                    $('.end_date').parent().append('<span class="error"style="color:red">请选择日期</span>')
+                            }
                     }
                 if (_yhcdhp==1){    // 银行兑汇票 选择是
+
+
                     var _temp = {'is_sel1':'cdhp_per1','is_sel2':'cdhp_per2','is_sel3':'cdhp_per3'}
                     var _temp_num = 0
                     for (key in _temp)
-                        if (param[key]=='1')
-                            if (!param[_temp[key]])
-                                {
+                        if (param[key]=='1'){
+                            if (!param[_temp[key]]) // 选中对票但不存在值
+                                {   
+                                    $('.'+_temp[key]+'').parent().append('<span class="error"style="color:red">请输入费用值</span>')
                                     _flag = false
-                                    _temp_num +=1
-                                }
+                                    // _temp_num +=1
+                                }}
                         else
                             _temp_num +=1
                     if (_temp_num==3)
-                        _flag =false
+                        {
+                            _flag =false
+                            $('#bankdp').append('<span class="error"style="color:red">请选择兑汇票费用</span>')
+                        }
                 }
                 else if (_yhcdhp)
                 {   
@@ -702,37 +740,48 @@ ul li{
                 }
 
                 if (!_flag){
-                    alert('请输入完整信息！')
+                    // alert('请输入完整信息！')
                     return false;
                 }
 
                 // ****
             // $('#flow-step #step2').click()  // 切换到第二步报价清单
+        if (Mr.getParamers()['mode']=='view')
+                {
+                    dic={
+                    'pk':Mr.getParamers()['pk'],
+                    'AccessToken':Mr.sstorage['AccessToken']
+                    }
+                Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteDetail/',dic,_fun)
+                }
+        else
             Mr.requestData(url,param,function(res){
-                Mr.saveSesstionStorage('')
+                // Mr.saveSesstionStorage('')
                 // 获取信息
                 dic={
                     'pk':Mr.getParamers()['pk'],
                     'AccessToken':Mr.sstorage['AccessToken']
-                // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
-
-            }
+                    }
                 Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteDetail/',dic,_fun)
             })
+
 
          })
 
          } // fun
 
-
+         if(Mr.getParamers()['mode']=='view')
+        {
+            $('#zancun,#zancun1').addClass('hidden')
+        }
     Mr.saveSesstionStorage('step',1)
     // Mr.saveSesstionStorage('AccessToken','VWdUZnpvTjhpemozRFV2bkh0KzcwcUY2d3FhcExoWmVnRGRTcm8vYk1JZz0gMTU2MDIzNTEyNy4zNCAxOTk4MDMgNjkyZjdmOGI1MTdjODg5NjQ1YWRhNzE4ZTcxMTZjZTM5MWU0ZDMwMg==')
 
         // 流程步骤
         $('#flow-step li').click(function(){
-            var _temp = parseInt($(this).find('.number').text())
+            var _temp = parseFloat($(this).find('.number').text())
             var paramers = Mr.getParamers()
-            if (_temp <=parseInt(Mr.sstorage['step']))
+            if (_temp <=parseFloat(Mr.sstorage['step']))
             {
                 // sel 设置选中样式
                 $('#flow-step li .number').removeClass('sel')
@@ -748,6 +797,7 @@ ul li{
         // 刷新页面 加载数据step1
         Mr.requestData('https://e.szby.cn/data_gy/bid/getQuoteInfo/',{
                 'pk':Mr.getParamers()['pk'],
+                // 'pk':15,
                 'AccessToken':Mr.sstorage['AccessToken'],
                 // 'AccessToken':'S0MzYmlsNHJ6VmtjS3M3MVFYdTNVbFV3czdCRy9pTitHSmlYaDhhZ3ZFND0gMTU2MDIxNTI0MC4zNSA3NTYyNjEgZmE2ZTc5NjNjOTAwNWU4NmY5Y2I2NjA2NzYwMWU4ZDdkOThhNGMxNg==',
                 'menu_id':'3000006',
@@ -835,7 +885,7 @@ _fun = function(res){
             paramer_isok =  inspect()
             if (!paramer_isok)
                 {
-                    alert('请确保完成所有品牌必填项信息')
+                    // alert('请确保完成所有品牌必填项信息')
                     return false
                 }
             console.log('__dataSet')
@@ -853,6 +903,11 @@ _fun = function(res){
                 // window.location.reload();  
             })  
         })
+    
+        $('.back_list').click(function(){
+            history.go(-1)
+        })
+    
     } // _fun
 
     // 设置品牌细节detail
@@ -921,7 +976,7 @@ _fun = function(res){
                     var readonly = header[x]['readonly']
                     var id = header[x]['id']
 
-                    var x_ = parseInt($('.AAA.active a').attr('value'))
+                    var x_ = parseFloat($('.AAA.active a').attr('value'))
                     _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
                     var __num = 0
                    if (x_!=0)
@@ -952,18 +1007,18 @@ _fun = function(res){
                                     _readonly=';background:#999;color:white" readonly  '
                                 if (name=='金额')   // （材料单价+安装单价）*数量
                                 {    
-                                    // value=parseInt((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)* parseInt((datas[_name[2]])?(datas[_name[2]]):0)
+                                    // value=parseFloat((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)* parseFloat((datas[_name[2]])?(datas[_name[2]]):0)
                                     value = datas[_name[4]]?datas[_name[4]]:0
                                 }
                                 if (name=='综合单价')
                                     {
                                         // value=((datas[_name[0]])?datas[_name[0]]:0 + (data2[_name[1]])?datas[_name[1]]:0)
-                                        value = datas[_name[3]]?datas[_name[3]]:0
+                                        value = datas[_name[3]]?datas[_name[3]]:''
                                         
                                     }
                                 if (name=='安装单价')
                                 {
-                                    value = (datas[_name[1]])?datas[_name[1]]:0
+                                    value = (datas[_name[1]])?datas[_name[1]]:''
                                     _temp+='<td><input _id="'+__id+'"   _required="'+required+'" temp="'+__num+'" class="change-1 sfbazf sfbazf'+__num+'" style="width:70%'+_readonly+' type="text" disable value="'+value+'"></td>'
                                     azdj = __num
                                 }
@@ -990,9 +1045,13 @@ _fun = function(res){
                     $('.sfbazf'+azdj+'').attr('readonly','')
                     $('.sfbazf'+azdj+'').css('background','#999')
                     $('.sfbazf'+azdj+'').css('color','white')
+                    if (!($('.sfbazf'+azdj+'').attr('value')))
+                        $('.sfbazf'+azdj+'').attr('value',0)
                 }
+       
                 for (var _ii=0;_ii<_name.length;_ii++)
-                    $('.change'+_name[_ii]+'').addClass('numberxz-n')
+                    if(_ii!=5&&_ii!=6)
+                        $('.change'+_name[_ii]+'').addClass('numberxz-n')
                 $('.change-1').addClass('numberxz-n')
                 $('.numberxz-n').attr('onkeyup','Mr.clearNoNum(this,"5")')
                 // $('.numberxz').attr('onkeyup','Mr.clearNoNum(this)')
@@ -1004,15 +1063,15 @@ _fun = function(res){
                     __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
                     _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
 
-                    var _num = parseInt($(this).attr('temp')) // 第几个
-                    a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
-                    b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
+                    var _num = parseFloat($(this).attr('temp')) // 第几个
+                    a = (parseFloat($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseFloat($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
+                    b = ((parseFloat($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseFloat($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
                     _value_ = a + b  // 综合单价
                     if (_name[1]==0 && _name[0]==0 )
                         _value_ =$('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').val()
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
 
-                    c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    c = (parseFloat($('.sl'+$(this).attr('temp')+'').html())?parseFloat($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
                     
                     _value = c*_value_ // 金额
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
@@ -1035,40 +1094,61 @@ _fun = function(res){
         $('.brand-cg').click(function(){
                         _content = JSON.parse(Mr.sstorage['content'])
                         _name = JSON.parse(Mr.sstorage['_name'])
-                        brand_flag = parseInt($(this).attr('value'))
+                        brand_flag = parseFloat($(this).attr('value'))
                         $('.brand-cg').removeClass('active')
                         $('#brand'+brand_flag+'').addClass('active')
                         brand_detail(_content,_name,brand_flag)
+
+                        obj = JSON.parse(Mr.sstorage['_obj'])
+                        $('.error').remove()
+                        for (var key in obj)
+                           {
+                            _tt = $('input[_id="'+obj[key]+'"]')
+                            $(_tt[parseInt(key)]).parent().append('<span class="error" style="color:red">*请输入</span>')
+                           }
+
             })
 
 } //flag_brand
     $('.brand-cg').click(function(){
                         _content = JSON.parse(Mr.sstorage['content'])
                         _name = JSON.parse(Mr.sstorage['_name'])
-                        brand_flag = parseInt($(this).attr('value'))
+                        brand_flag = parseFloat($(this).attr('value'))
                         $('.brand-cg').removeClass('active')
                         $('#brand'+brand_flag+'').addClass('active')
                         brand_detail(_content,_name,brand_flag)
+
+                        $('.error').remove()
+                        obj = JSON.parse(Mr.sstorage['_obj'])
+                        for (var key in obj)
+                           {
+                            _tt = $('input[_id="'+obj[key]+'"]')
+                            $(_tt[parseInt(key)]).parent().append('<span class="error" style="color:red">*请输入</span>')
+                           }
             })
 }
     for (var _i=0;_i<_brands_num.length;_i++)
         $('._brand'+_i+'').addClass('hidden')
     $('._brand'+brand_flag+'').removeClass('hidden')
 
+    // view
+    if (Mr.getParamers()['mode']=='view')
+        $('input').attr('disabled',true)
+
     // 次序
     $('.change'+_name[0]+',.sfbazf').bind('input propertychange', function() {
                     __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
                     _brands_num = JSON.parse(Mr.sstorage['_brands_num'])
 
-                    var _num = parseInt($(this).attr('temp')) // 第几个
-                    a = (parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseInt($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
-                    b = ((parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseInt($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
+                    var _num = parseFloat($(this).attr('temp')) // 第几个
+                    a = (parseFloat($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val())?parseFloat($('input[temp="'+$(this).attr('temp')+'"].change'+_name[0]+'').val()):0) // 材料单价
+                    b = ((parseFloat($('.sfbazf.sfbazf'+$(this).attr('temp')).val()))?(parseFloat($('.sfbazf.sfbazf'+$(this).attr('temp')).val())):0) // 安装单价
                     _value_ = a + b  // 综合单价
                     if (_name[1]==0 && _name[0]==0 )
                         _value_ =$('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').val()
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[3]+'').attr('value',_value_)  // 综合单价
 
-                    c = (parseInt($('.sl'+$(this).attr('temp')+'').html())?parseInt($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
+                    c = (parseFloat($('.sl'+$(this).attr('temp')+'').html())?parseFloat($('.sl'+$(this).attr('temp')+'').html()):0) // 数量
                     
                     _value = c*_value_ // 金额
                     $('input[temp="'+$(this).attr('temp')+'"].change'+_name[4]+'').attr('value',_value)  // 金额
@@ -1089,10 +1169,12 @@ _fun = function(res){
     } // brand_detail
     record_data = function(content){
         var bt_name = []
+    var brand_minchen = []
     if (Mr.sstorage['__dataSet'])
         for(var i=0;i<content.length;i++)
     {   
         data1 = content[i]['data']
+        brand_minchen.push(content[i]['brand'])
         var __num = 0 // 品牌数量
         for(var j=0;j<data1.length;j++)
         {   
@@ -1137,28 +1219,34 @@ _fun = function(res){
         if (!Mr.sstorage['brand'+i+''])
             Mr.saveSesstionStorage('brand'+i+'','false')
         _brands_num.push(__num)
+        
 
     }
     Mr.saveSesstionStorage('_brands_num',JSON.stringify(_brands_num))
+    Mr.saveSesstionStorage('brand_minchen',JSON.stringify(brand_minchen))
     Mr.saveSesstionStorage('__dataSet',JSON.stringify(__dataSet))
     } // record        
 
     update = function(){
         var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
-        current_step =  parseInt($('.AAA.active a').attr('value'))
+        current_step =  parseFloat($('.AAA.active a').attr('value'))
         valueSet = $('input[type="text"]input[temp]')
         console.log(valueSet)
         console.log(valueSet[0].getAttribute('temp'))
 
         for (var vt=0;vt<valueSet.length;vt++)
             {
-                var _temp = valueSet[vt].getAttribute('temp')
-                var id = valueSet[vt].getAttribute('_id')
-                // var value = valueSet[vt].val()
+                var _temp = $(valueSet[vt]).attr('temp')
+                var id = $(valueSet[vt]).attr('_id')
                 value = $('input[_id="'+id+'"]input[temp="'+_temp+'"]').val()
+                if (id=='amount'){
+                    value = value.toString()
+                    if (value.indexOf('.')!=-1)
+                        value = value.substr(0,value.indexOf('.')+5)    // 金额保留4位小数
+                }
                 // if (id=='model'){
                 //     alert(_value)}
-                __dataSet[_temp][id] = value
+                __dataSet[parseInt(_temp)][id] = value
             }
         console.log('update')
         console.log(__dataSet)
@@ -1166,23 +1254,57 @@ _fun = function(res){
     }
 
     inspect = function(){
+        var flag = true
         var bt_name = JSON.parse(Mr.sstorage['bt_name'])
         var __dataSet = JSON.parse(Mr.sstorage['__dataSet'])
+        $('.error').remove()
+        m_brands_num = JSON.parse(Mr.sstorage['_brands_num'])
+        var the_brand = '' // 属于第几个品牌的名称
+        brand_minchen = JSON.parse(Mr.sstorage['brand_minchen'])
+        var _obj = {}
         for(var i=0;i<__dataSet.length;i++)
-            {
+            {   
+                var m_brand_n = 0
+
                 for(var j=0;j<bt_name.length;j++)
                     {   
                         if ((__dataSet[i][bt_name[j]].toString()==''))
                             {
                                 // alert('请确保完成所有品牌必填项信息')
                                 // alert(i+','+j)
+                                for (var _i=0;_i<m_brands_num.length;_i++){
+                                    m_brand_n += parseInt(m_brands_num[_i])
+                                    if (i<m_brand_n)
+                                        {
+                                            // alert(_i)
+                                            the_brand += brand_minchen[_i]+','
+                                            break   
+                                        }
+                                    }
+
+                                _tt = $('input[_id="'+bt_name[j]+'"]')
+                                if (i<_tt.length)
+                                    {
+                                        _obj[''+i+''] = bt_name[j]
+                                        $(_tt[i]).parent().append('<span class="error" style="color:red">*请输入</span>')
+                                    }
+                                else
+                                    {
+                                        _obj[''+i+''] = bt_name[j]
+                                    }
+
                                 // console.log(i+','+j)
                                 // console.log(__dataSet[i][bt_name[j]])
-                                return false
+                                flag =  false
                             }
                     }
             }
-        return true
+        Mr.saveSesstionStorage('_obj',JSON.stringify(_obj))
+        console.log(_obj)
+        info = ('请输入品牌：'+the_brand+' 必填项信息')
+        if (the_brand)
+            alert(info)
+        return flag
     }
 
     </script>

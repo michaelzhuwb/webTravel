@@ -94,24 +94,28 @@ var GNR_Form =function(){
             if (m_element_type[i].length==1)
             {
                 m_temp_type = m_element_type[i][0]  // m_temp_type长度决定了有多少个控件
-                m_length = m_temp_type.length
-                if ((left_name[i].indexOf('银行承兑汇票费用'))!=-1)
-                    m_length = m_length/2
-                for (var _i=1;_i<m_length+1;_i++)
-                {               
-                                if (res[('is_sel'+(_i)+'')])
-                                {
-                                    value += Common.sel_control("",m_yhcdhp_v[_i-1],m_temp_type[_i*2-2][0], m_temp_type[_i*2-2][1],m_temp_type[_i*2-2][2])    // checkbox
-                                    value += Common.sel_control("",res[('cdhp_per'+(_i)+'')]+' %',m_temp_type[_i*2-1][0], m_temp_type[_i*2-1][1],m_temp_type[_i*2-1][2])
-                                }    
-                }     
+                for (var _i=0;_i<m_temp_type.length;_i++)
+                {   
+                    if ((left_name[i].indexOf('银行承兑汇票费用'))!=-1)
+                    {
+                        if (((_i+1)%2)!=0)
+                            {
+                                if (res[('is_sel'+(_i+1)+'')])
+                                    value += Common.sel_control("",m_yhcdhp_v[parseInt(_i/2)],m_temp_type[_i][0], m_temp_type[_i][1],m_temp_type[_i][2])
+                            }   
+                        else
+                            {   
+                                value += Common.sel_control("",res[('cdhp_per'+_i+'')],m_temp_type[_i][0], m_temp_type[_i][1],m_temp_type[_i][2])
+                            }  
+                    }     
+                }
+                console.log('value')
+                console.log(value)
             }
             else
                 value = Common.sel_control("F"+i+"",m_tempValue[i],m_element_type[i][0], m_element_type[i][1],m_element_type[i][2])
-            
             m_data_value.push({'m_name':left_name[i],'m_value':value})
-            }
-
+        }
         dataSet['m_Data']=m_data_value
         return dataSet
     }
@@ -124,7 +128,6 @@ var GNR_Form =function(){
         header = res['mat_header']
         m_header_name = []
         m_uppack_head = ['id','zb_mxid','','']
-        
         for (var i=0;i<header.length;i++)
         {   
             if(header[i]['type']==1)
@@ -193,11 +196,11 @@ var GNR_Form =function(){
 // brand = '品牌1'
     // 获取res
     getRes = function(){
+        // asyn :读取数据同步
         var param = {
             'sup_id':Mr.getParamers()['sup_id'],
             'brand':decodeURI(Mr.getParamers()['brand']),
             'pk':Mr.getParamers()['pk'],
-            'AccessToken':Mr.sstorage['AccessToken'],
             'async':'false'
         }
         Mr.requestData('https://lw.szby.cn/data/bid/getQuoteInfo/',param,null,)

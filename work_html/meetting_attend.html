@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>测试</title>
+
+	<!-- <link rel="stylesheet" type="text/css" href="michealMedia/css/jquery.dataTables.min.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="michealMedia/css/dataTables.bootstrap.css" /> -->
+    <link rel="stylesheet" type="text/css" href="michealMedia/bootstrap.min.css" />
+
+	<!-- <link rel="stylesheet" type="text/css" href="michealMedia/css/jquery.dataTables.css" /> -->
+    
+
+    <script type="text/javascript" src="micheal/jquery-3.4.1.min.js"></script>
+    <!-- <script src="michealMedia/template.js"></script> -->
+    <script type="text/javascript" src="micheal/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="micheal/jquery.dataTables.min.js"></script>  
+    <!-- <script src="michealMedia/js/dataTables.bootstrap.min.js"></script>   -->
+    <script type="text/javascript" src="micheal/wwlogin.min.js"></script>
+    <script type="text/javascript" src="testF/micheal_ajax.js"></script>  
+    
+
+    <!--micheal-->
+
+</head>
+<body style="overflow-y:scroll;overflow-x:auto; ">
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 645px; width: 1903px; z-index: -999999; position: fixed;">
+            <img style="overflow: hidden;position: absolute; margin: 0px; padding: 0px; border: medium none; width: 1903px; height: 290px; max-width: none; z-index: -999999; left: 0px; top: -212.719px;" src="media/image/bg/20170620_bg2.jpg">
+            </div>
+    <div id="content" >
+        <!-- 招标开标头部 -->
+        <div id='head_template'></div>
+        
+
+        <div class="hidden totalPrice_Sort list-group-item list-group-item-success" style="position:relative;top:60px">总价排名</li></div>
+        <div id='totalPrice_Sort' class="" style="position:relative;top:80px"></div>
+
+        <div class="hidden materials_Bill list-group-item list-group-item-warning" style="position:relative;top:80px">材料清单</li></div>
+        <div id='materials_Bill' class="" style="position:relative;top:100px"></div>
+        
+        <div class="nav-page hidden" style="align-content: center;text-align: center;position:relative;top:100px">
+            <nav class="" aria-label="Page navigation" >
+                <ul id = "nav-page" class="pagination">
+                  <!-- <li>
+                    <a href="####" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li><a href="###">1</a></li>
+                  <li><a href="###">2</a></li>
+                  <li><a href="###">3</a></li>
+                  <li><a href="###">4</a></li>
+                  <li><a href="###">5</a></li>
+                  <li>
+                    <a href="###" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li> -->
+                </ul>
+              </nav>
+        </div>
+
+
+
+        <div id='bid_Manage' class="" style="position:relative;top:80px" ></div>
+    </div>
+                
+
+<!-- 头部页面 -->
+<script id='headTemplate' type="text/x-jquery-tmpl">
+    <div class="container-fluid" style="">
+        <div style="">
+          <nav class="navbar navbar-default navbar-fixed-top" style="background-color:transparent !important;">
+                <div class="container-fluid" style="">
+                    <div class=" navbar-header"  style="background-color:transparent !important;">
+                            <a class="navbar-brand" href="#">
+                            <img  style="" class="brand media-object" src="michealMedia/images/logo_by.png" alt="Brand">
+                            </a>
+                        <p style="color: white;font-size:30px;opacity:1"class="brandDcp navbar-text"><strong>&nbsp;</strong>&nbsp;&nbsp;智能在线招标系统</p>
+
+                    </div>
+                    <div class="collapse navbar-collapse" style="margin-right:20px">
+                        <p style="color: white;font-size:30px;" class="brandDcp navbar-text navbar-right"><strong>&nbsp;</strong>&nbsp;&nbsp;开标会议签到</p>
+                    </div>
+            </nav>
+        </div>
+    </div>
+
+    <div style="position:relative;top:80px">
+            <table class="table" style="width=100% !important">
+                    <tr>
+                        <td class="type-info">
+                            <p id="proj_name">招标项目：</p>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                        <td class="type-info" style="text-align:right;" >
+                            <p class="right" id="mat_name">招标材料：</p>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+</script>
+<!-- 总价排名 -->
+<script id='totalPriceSort' type="text/x-jquery-tmpl" >
+        <div class="one-part">
+            <table width="100%">
+               
+                <tr>
+                    <td width="10%">
+                        ${rank}名
+                    </td>
+                    <td width="" >
+                            <!-- <div class="panel panel-default" style="height:80px">
+                                    <div class="panel-heading">
+                                      <h3 class="panel-title">公司${sup_name}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                      ${price}元
+                                    </div>
+                                  </div> -->
+                                  <h4 class="list-group-item-heading">${sup_name}</h4>
+                                  <p class="list-group-item-text">${amount}元</p>
+                    </td>
+                    <td width="40%" >
+                            <div class="progress" style="height:50px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: ${floating_percentage}%;"  height="1000px">
+                                        <!-- <span class="sr-only">${progress} 进度条</span> -->
+                                    </div>
+                            </div>
+                    </td>
+                    <td width="10%">
+                            ${floating_percentage}
+                    </td>
+                    <td width="10%">
+                        <button class="start_yb" type="button" class="btn btn-primary" sup_id="${sup_id}" brand="${brand}" >开始议标</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- </div> -->
+
+</script>
+<!-- 材料清单 -->
+<script id="materialsBill" type="text/x-jquery-tmpl">
+    <div class="two-part">
+            <div class='t-title'></div>
+            <div class="tender-info" >投标单价相关信息</div>
+            <table id="materialsBillExample" class="display  table-bordered example" width="100%" cellpadding='0' cellspacing='0' style="min-width:100%;text-align:center">
+
+                <!-- <tfoot>
+                    <th style="text-align:center">合计</th>
+                    <th>产品</th>
+                    <th>数据来源</th>
+                    <th>数据类型</th>
+                </tfoot> -->
+                
+            </table>
+    </div>
+</script>
+<!-- 签到页面 -->
+<script id='bidManage' type="text/x-jquery-tmpl">
+    <div class='bidManage_left' style="">
+        <!-- <table class="table" style="width=100% !important">
+            <tr>
+                <td class="type-info">
+                    <small>招标项目<small>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td class="type-info" style="text-align:right;" >
+                    <small class="right">招标材料：<p id="mat_name">123</p></small>
+                </td>
+            </tr>
+        </table> -->
+        <table class="table" style="width=100% !important">
+            <tr style="border-top:none">
+                <td width="50%" style="border-top:none">
+                    <table class="table" style="border-top:none">
+                        <tr>
+                            <td style="border-top:none">
+                                <div id="kb_time" style="display:inline;">开标时间：</div> 
+                                <div style="display:inline;float:right"><button class="btn btn-primary" id="qrcodes" type="button" style="align:right;margin-right:30px" >迟到乐捐</button></div>   
+                                <hr style="border:1px solid">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-top:none">
+                                <table id="bidManageExample" class="display table"  cellpadding='0' cellspacing='0'></table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="border-top:none">
+                    <div id="qrcode" class="hidden" style="display:inline;"><img src="michealMedia/images/QRcode.jpg" width="200"></div>
+                </td>
+                <td width="40%" style="border-top:none;text-align:center">
+                    <table class="" >
+                    <tr><td>
+                    <p class="" style="font-size:24px;" >请所有<span style="color:red">参会人员</span>用企业微信进行扫码签到</p>
+                    </td></tr>
+                    <tr><td style="text-align:center">
+                        <!-- <img src="michealMedia/images/QRcode.png"> -->
+                        <div id="qr_code">
+                        </div>
+                    </td></tr>
+                    <tr><td>
+                        签到成员：<div style="display:inline-block;" id="sign_users">5人<div>
+                    </td></tr>
+                    <tr><td>
+                        <button id="kaibiao" style="margin-top:10px;padding:10px 100px" type="button" class="btn btn-success" disabled>签到完成,一键开标</button>
+                    </td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+<!-- </div> -->
+</script>
+
+
+
+<!-- <style >
+     body,.pre-part-table{padding:0;margin:0} 
+     .logo-split{width: 100%}
+    .logo .img-title{padding-left: 5px}
+    .logo .img-right{text-align: right;align:right;display: block;float: right;margin-top: 7px;margin-right: 10px}
+    .logo-info{margin-bottom: 5px}
+    .logo-info .left{text-align: left;padding-left: 10px}
+    .logo-info .right{text-align: right;padding-right: 100px}
+
+    .pre-part-table{width: 100%;border: peachpuff }
+    .pre-part-table td{height: 50px;text-align:right;}
+    .pre-part-table .td_1{text-align:right;padding-right:10px;}
+    .tender-start{ text-decoration:none}    /*开始议标*/
+    .f-title,.s-title {align:left;background-color:orange; padding-left: 5px;padding-top: 5px;padding-bottom: 5px }  /* [材料清单，总价排名] */
+
+    
+    .chart{background-color:white;border: 1px solid;height:100%;border-collapse: collapse; }   /*图表设置*/
+    .pre-part-table .td_0{text-align: left}       /*第一个表格的第一行*/
+    .two-part{margin-top: 10px} 
+    .tender-info{text-align:right;;margin-right: 200px;}           /*投标单价相关信息*/
+    #back-part-table{cellspacing:0;cellpadding:0;text-align: center;border:slategray solid;color: black}
+    #back-part-table td{text-align: center;border-right:slategray solid;border-bottom:slategray solid;color: black;height: 100%;}
+    #back-part-table th{text-align: center;border-right:slategray solid;border-bottom:slategray solid;color: black;background: darkgrey}
+    /* .chart-pre{background-color:paleturquoise;border: 1px solid;height: 100%;width: 10%} */
+    /* .chart-back{background-color: lightgreen;border: 1px solid;height: 100%;width: 2000%;} */
+    .chart-valid{background-color: lightgreen;height: 100%;width: 50%}
+
+</style> -->
+
+<script type='text/javascript'>
+    var head=[];
+    var _temp=[];
+    var _heads=[];
+    //静态请求数据
+    $.ajax({
+            //请求方式为get
+            type:"GET",
+            //json文件位置
+            url:"./micheal/configBase/baseinfo.json",
+            //返回数据格式为json
+            dataType: "json",
+            async:false,    // 同步
+            complete:function(res){
+                result=eval("("+res.responseText+")");
+                // console.log(result)
+                head = result['head']
+                _heads.push(head)
+                // _heads = head.concat(result['qrcode'])
+                _heads = (result['qrcode'])
+                console.log('heads')
+                console.log(_heads)
+                for (var i=0;i<result['info'].length;i++){
+                    _temp.push(result['info'][i])
+                }
+            }
+         });
+    console.log(head)
+    data = [{logoImgAddr:'./michealMedia/images/logo.png',"DscribeInfo":'供应商服务平台'}]   
+ 
+        // li_content =[['第一行','投标公司','图表','比例','开始议标'],['第二行','投标公司','图表'],['第三行','投标公司','图表']] //测试
+
+        $('#headTemplate').tmpl(head).appendTo('#head_template')     
+        // $('#totalPriceSort').tmpl([{rank:1},{price:2},{price:2}]).appendTo('#totalPrice_Sort')  // 一键开标后的表单
+        // $('#materialsBill').tmpl(head).appendTo('#materials_Bill')                              //一键开标后的表单 
+        $('#bidManage').tmpl(head).appendTo('#bid_Manage')                              // 签到,一件开标页面
+
+         // 同页面下不同显示
+
+
+$(document).ready(function() {
+    // 迟到乐捐
+    $('#qrcodes').mouseover(function(){
+        $('#qrcode').removeClass('hidden')
+    })
+    $('#qrcodes').mouseleave(function(){
+        $('#qrcode').addClass('hidden')
+    })
+
+
+
+
+
+    var dataSets = [
+            ['Trident','Internet Explorer 5.0','Win 95+','5','C'],
+            ['Trident','Internet Explorer 5.5','Win 95+','5.5','A'],
+            ['Trident','Internet Explorer 6','Win 98+','6','A'],
+            ['Trident','Internet Explorer 7','Win XP SP2+','7','A'],
+            ['Trident','AOL browser (AOL desktop)','Win XP','6','A'],
+        ];
+
+
+// var parms = window.location.search;
+var _t = window.location.search.substring(1).replace('#','');
+    x = _t.split('&')
+    _parm = Object()
+    for(var i=0;i<x.length;i++)
+    {
+        var _t = x[i].split('=')
+        if (_t.length==1)
+            _parm[_t[-1]] = ''
+        else
+            _parm[_t[0]]= _t[1]
+    }
+
+//if (_parm['code']){
+if (1==2){
+    console.log('参数')
+    console.log(_parm)
+    $.ajax({
+        type:"POST",
+        url:"https://lw.szby.cn/data/bid/userSign/",
+        data:_parm,
+        dataType: "json",
+        // async:false,    // 同步
+        complete:function(res,status){
+            _result=eval("("+res.responseText+")");
+            if (_result['errcode']!=0)
+                {
+                    alert(_result['errmsg'])
+            }
+        },
+            success:function(res){
+                var data_sets = []
+                var data = res['data']['user_list']
+                for (var i=0;i<data.length;i++)
+                {   
+                    var data_set = []
+                    _data = data[i]
+                    for (var key in _data)
+                        {
+                            data_set.push(_data['usr_name'])
+                            data_set.push(_data['dept_name']) // 部门
+                            data_set.push(_data['sign_time']) // 
+                            if (_data['late_minute']<=0)
+                                data_set.push('123<0')
+                            else
+                                data_set.push(_data['late_minute'])
+
+
+                        }
+                        data_sets.push(data_set)
+
+                }
+                jQuery('#bidManageExample').dataTable( {
+                                    data: data_sets,
+                                    info: false,     //底部信息
+                                    ordering: false,    // 禁止排序
+                                    paging: false,      // 禁止分页
+                                    bFilter: false,     // 禁止搜索
+                                    // "sScrollY" : 80, //DataTables的高  
+                                        // "sScrollX" : 820, //DataTables的宽  
+                                    // bScrollCollapse : false, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                                    "columns": [
+                                        // { "title": "<span class='f-titles'>总价排名</span>" },
+                                        { "title": "姓名" },
+                                        { "title": "部门" },
+                                        { "title": "签到时间" },
+                                        { "title": "迟到" },
+                                        // { "title": "型号"}
+                                    ],
+                                    "lengthMenu": [3],      //每页显示多少数据
+                                    "lengthChange": false,   //选择每页显示多少条数据，下拉选项       
+
+                                    zeroRecords: "没有内容",
+                                    // "sScrollX": "100%",
+                                    "oLanguage": { //国际化配置  
+                                            "sProcessing" : "正在获取数据，请稍后...",    
+                                            "sLengthMenu" : "显示 _MENU_ 条",    
+                                            "sZeroRecords" : "暂时没有人员签到",    
+                                            "sInfo" : "从 _START_ 到  _END_ 条记录 总记录数为 _TOTAL_ 条",    
+                                            "sInfoEmpty" : "记录数为0",    
+                                            "sInfoFiltered" : "(全部记录数 _MAX_ 条)",    
+                                            "sInfoPostFix" : "",    
+                                            "sSearch" : "搜索",    
+                                            "sUrl" : "",    
+                                            "oPaginate": {    
+                                                "sFirst" : "第一页",    
+                                                "sPrevious" : "上一页",    
+                                                "sNext" : "下一页",    
+                                                "sLast" : "最后一页"    
+                                            }  
+                                        },  
+                                });
+            }
+    })
+} // if
+else{
+
+// 签到页面表格
+    $.ajax({
+            type:"POST",
+            url:"https://lw.szby.cn/data/bid/userSign/",
+            data:_parm,
+            dataType: "json",
+            // async:false,    // 同步
+            complete:function(res,status){
+                _result=eval("("+res.responseText+")");
+                if (_result['errcode']!=0)
+                    {
+                        alert(_result['errmsg'])
+                }
+            },
+                success:function(res){
+                    var data_sets = []
+                    var data = res['data']['user_list']
+                    var sign_count = 0;
+                    for (var i=0;i<data.length;i++)
+                    {   
+                        var data_set = []
+                        _data = data[i]
+                        if (_data['sign_time']) sign_count++;
+                        data_set.push(_data['usr_name'])
+                        data_set.push(_data['dept_name']) // 部门
+                        data_set.push(_data['sign_time']) // 
+                        if (_data['late_minute']<=0)
+                            data_set.push('')
+                        else
+                            data_set.push(_data['late_minute'])
+                        data_sets.push(data_set)
+                    }
+                    $("#proj_name").html("招标项目："+res['data']['proj_name']);
+                    $("#mat_name").html("招标材料："+res['data']['zbfw']);
+                    $("#kb_time").html("开标时间："+res['data']['kb_time']);
+                    $("#sign_users").html(sign_count+"人");
+                    if (sign_count<3){
+                        $("#sign_users").css("color","red");
+                        $("#kaibiao").attr("disabled",true); 
+                    }
+                    else{
+                        $("#sign_users").css("color","green");
+                        $("#kaibiao").attr("disabled",false); 
+                    }
+                    jQuery('#bidManageExample').dataTable( {
+                                        data: data_sets,
+                                        info: false,     //底部信息
+                                        ordering: false,    // 禁止排序
+                                        paging: false,      // 禁止分页
+                                        bFilter: false,     // 禁止搜索
+                                        // "sScrollY" : 80, //DataTables的高  
+                                            // "sScrollX" : 820, //DataTables的宽  
+                                        // bScrollCollapse : false, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                                        "columns": [
+                                            // { "title": "<span class='f-titles'>总价排名</span>" },
+                                            { "title": "姓名" },
+                                            { "title": "部门" },
+                                            { "title": "签到时间" },
+                                            { "title": "迟到" },
+                                            // { "title": "型号"}
+                                        ],
+                                        "lengthMenu": [3],      //每页显示多少数据
+                                        "lengthChange": false,   //选择每页显示多少条数据，下拉选项       
+
+                                        zeroRecords: "没有内容",
+                                        // "sScrollX": "100%",
+                                        "oLanguage": { //国际化配置  
+                                                "sProcessing" : "正在获取数据，请稍后...",    
+                                                "sLengthMenu" : "显示 _MENU_ 条",    
+                                                "sZeroRecords" : "暂时没有人员签到",    
+                                                "sInfo" : "从 _START_ 到  _END_ 条记录 总记录数为 _TOTAL_ 条",    
+                                                "sInfoEmpty" : "记录数为0",    
+                                                "sInfoFiltered" : "(全部记录数 _MAX_ 条)",    
+                                                "sInfoPostFix" : "",    
+                                                "sSearch" : "搜索",    
+                                                "sUrl" : "",    
+                                                "oPaginate": {    
+                                                    "sFirst" : "第一页",    
+                                                    "sPrevious" : "上一页",    
+                                                    "sNext" : "下一页",    
+                                                    "sLast" : "最后一页"    
+                                                }  
+                                            },  
+                                    });
+                }
+        })
+}
+
+// 企业微信二维码
+window.WwLogin({
+            "id" : "qr_code",  
+            "appid" : "wxc6d740ece61b7ec1",
+            "agentid" : "1000007",
+            "redirect_uri" :"https://lw.szby.cn/meetting_attend.html?pk="+_parm['pk'],
+            "state" : "",
+            "href" : "",
+    });
+
+
+// 一键开标后的表单
+
+
+kaibiao = function(res){
+
+    super_list = res['data']['sup_list']
+    // 增加排名
+    for (var i=0;i<super_list.length;i++)
+        super_list[i]['rank'] = i+1
+
+
+    Mr.saveSesstionStorage('super_list',JSON.stringify(super_list))
+
+    var data_sets = res['data']['mat_list']['rows']
+    var header = []
+    var _head = res['data']['mat_list']['header']
+    _temp_n = _head.indexOf('数量')
+
+    for (var i=0;i<_head.length;i++)
+        {
+            if (i>_temp_n)
+                header.push({'title':_head[i],'sClass':'unit_price'+(i+res['pageNo'])+''})
+            else
+                header.push({'title':_head[i]})
+        }
+    Mr.saveSesstionStorage('header',JSON.stringify(header))
+    Mr.saveSesstionStorage('data_sets',JSON.stringify(data_sets))
+    Mr.saveSesstionStorage('pageno',res['pageNo'])
+    Mr.saveSesstionStorage('max_page',res['totalPage'])
+
+    
+    // 展示分页
+    page = $('#nav-page')
+    page.append('<li><a value="prev" class="click_page_num" href="###" onclick="page_fun(this);" aria-label="Next"><span aria-hidden="true">&laquo;</span></a></li>')
+    for(var i=0;i<res['totalPage'];i++)
+        {
+            var li = document.createElement('li')
+            if (!i)
+                li.className='active'
+            li.innerHTML = '<a class="click_page_num" onclick="page_fun(this);" value='+(i+1)+'>'+(i+1)+'</a>'
+            page.append(li)
+        }
+    page.append('<li><a class="click_page_num" href="###" onclick="page_fun(this);" value="next" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>')
+    
+    // $('.click_page_num').click(function(){
+    //     page_fun(this)
+    // })
+
+    };
+
+parmer = {
+    'pk':Mr.getParamers()['pk'],
+    'AccessToken':Mr.sstorage['AccessToken']
+}
+Mr.requestData('https://lw.szby.cn/data/bid/openBidData/',parmer,kaibiao)
+
+// 开标
+// $('#materials_Bill,.materials_Bill,.totalPrice_Sort,#totalPrice_Sort').addClass('hidden');
+$('#kaibiao').click(function(){
+        $('.materials_Bill,.totalPrice_Sort,.nav-page').removeClass('hidden');
+        $('#bid_Manage').addClass('hidden')
+
+        super_list = JSON.parse(Mr.sstorage['super_list'])
+        data_sets = JSON.parse(Mr.sstorage['data_sets'])
+        header = JSON.parse(Mr.sstorage['header'])
+        start_num = -1
+        for (var key in header)
+            if (header[key]['title'].indexOf('数量')!=-1)
+                {start_num = key;break;}
+        end_num = header.length
+        // 判断最小值
+        for(var i=0;i<data_sets.length;i++){
+            _data = data_sets[i]
+            for (var j=0;j<_data.length;j++)
+            {
+                if (start_num<j&&j<_data.length-1)
+                    if  (_data[j]==_data[_data.length-1])
+                        data_sets[i][j] = '<span style="background:green;color:white">'+_data[j]+'</span>'
+            }
+        }
+
+
+        $('#totalPriceSort').tmpl(super_list).appendTo('#totalPrice_Sort')  // 一键开标后的表单
+        $('#materialsBill').tmpl(head).appendTo('#materials_Bill')          //一键开标后的表单 
+
+        $('.start_yb').click(function(){
+            sup_id = $(this).attr('sup_id')
+            brand = $(this).attr('brand')
+            pk = Mr.getParamers()['pk']
+            url = "mat_call_bid.html?pk="+pk+'&brand='+brand+'&sup_id='+sup_id+''
+            alert(url)
+            // Mr.requestData('mat_call_bid.html')
+            location.href=(url)
+
+        })
+
+
+        _dab = jQuery('#materialsBillExample').dataTable( {
+                data: data_sets,
+                info: false,     //底部信息
+                ordering: false,    // 禁止排序
+                paging: false,      // 禁止分页
+
+                bFilter: false,     // 禁止搜索
+                "sScrollY" : "100%", //DataTables的高  
+                    // "sScrollX" : 820, //DataTables的宽  
+                bScrollCollapse : false, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                "columns": header,
+
+                "lengthMenu": [-1],      //每页显示多少数据
+                "lengthChange": false,   //选择每页显示多少条数据，下拉选项       
+
+                zeroRecords: "没有内容",
+                "sScrollX": "100%",
+                "oLanguage": { //国际化配置  
+                        "sProcessing" : "正在获取数据，请稍后...",    
+                        "sLengthMenu" : "显示 _MENU_ 条",    
+                        "sZeroRecords" : "没有您要搜索的内容",    
+                        "sInfo" : "从 _START_ 到  _END_ 条记录 总记录数为 _TOTAL_ 条",    
+                        "sInfoEmpty" : "记录数为0",    
+                        "sInfoFiltered" : "(全部记录数 _MAX_ 条)",    
+                        "sInfoPostFix" : "",    
+                        "sSearch" : "搜索",    
+                        "sUrl" : "",    
+                        "oPaginate": {    
+                            "sFirst" : "第一页",    
+                            "sPrevious" : "上一页",    
+                            "sNext" : "下一页",    
+                            "sLast" : "最后一页"    
+                        }  
+                    },
+   
+})
+    _dab = $('#materialsBillExample').DataTable()
+    // 合计
+    total = []
+    total.push('<div class="sum_num">合计</div>')
+    _pageno = parseInt(Mr.sstorage['pageno'])
+    for (var i=1;i<end_num;i++){
+            if (i>start_num)
+                {
+                    x = $('.unit_price'+(i+_pageno)+'')
+                    var _temps = 0
+                    for (var _i=2;_i<x.length;_i++)
+                        _temps+=parseFloat($(x[_i]).text())
+                    total.push(_temps)
+                }
+            else
+                total.push('')
+            }        
+    _dab.row.add(total).draw()
+    
+    console.log(total)
+
+                        // 添加合计行
+            // var last_table_row = '<table width="100"%><tr><th>123</th><tr></table>'
+            // $('.example').append(last_table_row)
+
+        //window.location.reload(); //刷新页面
+    });
+
+});
+
+// 分页函数
+page_fun = function(obj){
+
+    $('.click_page_num').parent().removeClass('active')
+    cur_page = $(obj).attr('value')
+    _value = -1
+    if (cur_page!='next' && cur_page!='prev')
+        {
+            _value = parseInt($(obj).attr('value'))
+            $('.click_page_num[value="'+$(obj).attr('value')+'"]').parent().addClass('active')
+        }
+    else
+        if (cur_page=='next')
+            {
+                _value = (parseInt(Mr.sstorage['pageno'])+1>parseInt(Mr.sstorage['max_page']))?parseInt(Mr.sstorage['max_page']):parseInt(Mr.sstorage['pageno'])+1
+                $('.click_page_num[value="'+_value+'"]').parent().addClass('active')
+            }
+        else
+        {
+            _value = (parseInt(Mr.sstorage['pageno'])-1>0)?parseInt(Mr.sstorage['pageno'])-1:1
+            $('.click_page_num[value="'+_value+'"]').parent().addClass('active')
+        }
+    Mr.saveSesstionStorage('pageno',_value)
+
+
+    parmer = {
+    'pageNo':_value,
+    'pk':Mr.getParamers()['pk'],
+    'AccessToken':Mr.sstorage['AccessToken']
+    }
+    console.log(parmer)
+    Mr.requestData('https://lw.szby.cn/data/bid/openBidData/',parmer,function(res){
+        super_list = res['data']['sup_list']
+        // 增加排名
+        for (var i=0;i<super_list.length;i++)
+            super_list[i]['rank'] = i+1
+
+
+        Mr.saveSesstionStorage('super_list',JSON.stringify(super_list))
+        Mr.saveSesstionStorage('max_page',res['totalPage'])
+
+        var data_sets = res['data']['mat_list']['rows']
+
+        var header = []
+        var _head = res['data']['mat_list']['header']
+        start_num = _head.indexOf('数量')
+        end_num = _head.length
+        // for (var key in _head)
+        //     if (header[key]['title'].indexOf('数量')!=-1)
+        //         {start_num = key;break;}
+        __t = parseInt(_value)
+        for (var i=0;i<_head.length;i++)
+        {
+            if (i>start_num)
+                header.push({'title':_head[i],'sClass':'unit_price'+(i+__t)+''})
+            else
+                header.push({'title':_head[i]})
+        }
+
+
+
+        // 判断最小值
+        for(var i=0;i<data_sets.length;i++){
+            _data = data_sets[i]
+            for (var j=0;j<_data.length;j++)
+            {
+                if (start_num<j&&j<_data.length-1)
+                    if  (_data[j]==_data[_data.length-1])
+                        data_sets[i][j] = '<span style="background:green;color:white">'+_data[j]+'</span>'
+            }
+        }
+
+
+        // Mr.saveSesstionStorage('header',JSON.stringify(header))
+        // Mr.saveSesstionStorage('data_sets',JSON.stringify(data_sets))
+        $('#totalPrice_Sort').empty()
+        $('#materials_Bill').empty()
+
+        $('#totalPriceSort').tmpl(super_list).appendTo('#totalPrice_Sort')  // 一键开标后的表单
+        $('#materialsBill').tmpl(head).appendTo('#materials_Bill')          //一键开标后的表单 
+        _dab = jQuery('#materialsBillExample').dataTable( {
+                data: data_sets,
+                info: false,     //底部信息
+                ordering: false,    // 禁止排序
+                paging: false,      // 禁止分页
+
+                bFilter: false,     // 禁止搜索
+                "sScrollY" : "100%", //DataTables的高  
+                    // "sScrollX" : 820, //DataTables的宽  
+                bScrollCollapse : false, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                "columns": header,
+
+                "lengthMenu": [-1],      //每页显示多少数据
+                "lengthChange": false,   //选择每页显示多少条数据，下拉选项       
+
+                zeroRecords: "没有内容",
+                "sScrollX": "100%",
+                "oLanguage": { //国际化配置  
+                        "sProcessing" : "正在获取数据，请稍后...",    
+                        "sLengthMenu" : "显示 _MENU_ 条",    
+                        "sZeroRecords" : "没有您要搜索的内容",    
+                        "sInfo" : "从 _START_ 到  _END_ 条记录 总记录数为 _TOTAL_ 条",    
+                        "sInfoEmpty" : "记录数为0",    
+                        "sInfoFiltered" : "(全部记录数 _MAX_ 条)",    
+                        "sInfoPostFix" : "",    
+                        "sSearch" : "搜索",    
+                        "sUrl" : "",    
+                        "oPaginate": {    
+                            "sFirst" : "第一页",    
+                            "sPrevious" : "上一页",    
+                            "sNext" : "下一页",    
+                            "sLast" : "最后一页"    
+                        }  
+                    },
+                rowCallback:function(){
+                    main_table = $('materialsBillExample')
+                    var tfoot = document.createElement('tfoot')
+                    tfoot.innerHTML = '<td>总合计</td>'
+                    main_table.append(tfoot)
+                }       
+            }) // datatable
+    
+    _dab = $('#materialsBillExample').DataTable()
+    // 合计
+        total = []
+        total.push('<div class="sum_num">合计</div>')
+        _pageno = parseInt(Mr.sstorage['pageno'])
+        _pageno = parseInt(_value)
+    for (var i=1;i<end_num;i++){
+            if (i>start_num)
+                {   
+                    x = $('.unit_price'+(i+_pageno)+'')
+                    var _temps = 0
+                    for (var _i=2;_i<x.length;_i++)
+                        _temps+=parseFloat($(x[_i]).text())
+                    total.push(_temps)
+                }
+            else
+                total.push('')
+            }
+            
+            
+    _dab.row.add(total).draw()
+
+    })
+}
+
+
+</script>
+
+<style>
+        #example_paginate,#example{text-align: center !important}
+        #example tfoot tr th{text-align: center}
+        .example thead tr th{background-color: #ddd;padding-top: 20px;text-align: center;padding-bottom: 20px;}
+</style>
+
+<style>
+.part-table td{text-align: center;border-right:slategray solid;border-bottom:slategray solid;color: black;height: 100%;}
+.part-table th{text-align: center;border-right:slategray solid;border-bottom:slategray solid;color: black;background: darkgrey}
+.brand{width: 160px;height: 47.4px;background-color: rgba(255, 255, 255, 0) !important;}
+.brandDcp{color: white}
+</style>
+<!-- <link rel="stylesheet" type="text/css" href="michealMedia/css/bootstrap.min.css" /> -->
+<script type="text/javascript" src="michealMedia/bootstrap.min.js"></script>  
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>手写签名</title>
+
+
+    
+    <link rel="stylesheet" type="text/css" href="testF/michealMedia/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="testF/css/mui.css" />
+
+    <script src="testF/michealMedia/jquery-3.4.1.min.js"></script>
+    <script src="testF/michealMedia/jquery.tmpl.min.js"></script>
+    <script src="testF/michealMedia/js/bootstrap.min.js"></script>    
+    <script src="testF/js/mui.min.js"></script>
+    <script src="testF/flashcanvas.js"></script>
+    <script src="testF/jSignature.min.js"></script>
+    <script src="testF/micheal_ajax_test.js"></script>
+
+
+</head>
+<body>
+    <script>
+    
+    // $(function () {
+    //         $("#signature").jSignature();
+    //     //    $(".jSignature").css({ "height": "50%" });
+    //     });
+        $(function() {
+              var arguments = {
+            width: '100%',
+            height: '100%',
+            color:'#000',
+            "decor-color": "transparent",//去除默认画布上那条横线
+            lineWidth: '3'
+        };
+// {'height':'20%','width':'100%'}
+        $("#signature").jSignature(arguments)
+    })
+
+
+        function reset() {
+            var $sigdiv = $("#signature");
+            $sigdiv.jSignature("reset");
+            $('#image img').attr('src','')
+        }
+        function outputImage() {
+            var $sigdiv = $("#signature");
+            var datapair = $sigdiv.jSignature("getData", "image"); //设置输出的格式，具体可以参考官方文档
+
+            var imagebase64 = datapair[1].replace(/\+/g, '%2B');
+
+            $.ajax({
+                type: "POST",
+                url: "Default.aspx",
+                data: "image=" + imagebase64,
+                success: function (msg) {
+                    var createImage = new Image();
+                    createImage.src = msg;
+                    $(createImage).appendTo($("#img_src"))
+                }
+            });
+
+        }
+        function jSignatureTest() {
+
+            var hiddenWidth = $("#signature").css('width');
+            var hiddenHeight = $("#signature").css('height');
+            console.log(hiddenWidth+','+hiddenHeight)
+            alert(window.screen.height)
+            var $sigdiv = $("#signature");
+            var datapair = $sigdiv.jSignature("getData", "image"); //设置输出的格式，具体可以参考官方文档
+
+            var i = new Image();
+            i.src = "data:" + datapair[0] + "," + datapair[1]
+            // $(i).appendTo($("#image")) // append the image (SVG) to DOM.
+            $('#image img').attr('src',"data:" + datapair[0] + "," + datapair[1])
+        }
+
+        function bodyScroll(event){  
+            event.preventDefault();  
+        } 
+
+        document.body.addEventListener('touchmove',bodyScroll,false);  
+        $('body').css({'position':'fixed',"width":"100%"});
+
+    </script>  
+    <div class="mui-content">
+
+        <fieldset id="sig_c" style="margin-top: 5%;;margin-left: 10%;border: 4px dotted #555; width: 80%;height: 80%"> 
+            <!-- <legend>签名区域</legend>  -->
+            <div id="signature" style="height: 100%;background:red;"> 
+            </div>
+         </fieldset> 
+         <div>
+            <button type="button" onclick="jSignatureTest()"> 输出签名</button> 
+            <button type="button" onclick="reset()"> 重置</button> 
+            <!-- <button type="button" onclick="outputImage()"> 生成Image图片</button>  -->
+         </div>
+         <div style="float:right">
+                <button id="cancel" type="button" class="mui-btn mui-btn-primary"> 取消 </button>
+                <button id="save" type="button" class="btn btn-success">保存</button>
+         </div>
+
+
+         <div id="image" style="margin: 20px"> 
+            <img src="" alt="">
+        </div> 
+         <div id="img_src"> 
+         </div> 
+</div>
+<style>
+body{
+    width:100%;
+}
+    /* #signature{
+        transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    }
+     */
+</style>
+<script type="text/javascript">
+    weight = ''+window.screen.width*0.8+'px'
+    height = ''+window.screen.height*0.8+'px'
+    $('#sig_c').css({"width":weight,'height':height})
+    
+    var hiddenWidth = $("#signature").css('width');
+    var hiddenHeight = $("#signature").css('height');
+
+
+    mui(document).on('tap','#save',function(){
+        var $sigdiv = $("#signature");
+        var datapair = $sigdiv.jSignature("getData", "image"); //设置输出的格式，具体可以参考官方文档
+        var src_data = "data:" + datapair[0] + "," + datapair[1]
+        Mr.saveSesstionStorage('signature_img_base64',src_data)
+
+        param = {
+            'pk':Mr.getParamers()['pk'],
+            'AccessToken':Mr.sstorage['AccessToken'],
+            'signature':src_data,
+            'reason':Mr.sstorage['reason'],
+            'sel_intention':Mr.sstorage['sel_intention']
+        }
+        Mr.requestData('https://lw.szby.cn/complaint/gy/bid_manage/saveBitInfo/',param,function(){
+            alert('保存成功')
+            // location.href= 'openbidfeedback.html'
+        })
+        console.log('param')
+        console.log(param)
+    })
+
+    mui(document).on('tap','#cancel',function () {
+        mui.back();
+      });
+</script>
+
+</body>
+</html>

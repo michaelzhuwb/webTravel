@@ -7,6 +7,14 @@ var Mr = function(){
     // JSON.stringify JSON.parse
 
     // 打包数据(相同class列的数据 input)
+    function test(){
+        var vals = [];
+       $.each($('input:checkbox:checked'),function(){
+           vals.push($(this).val());
+       });
+   }
+
+   //   obj 种类元素Set
     uppack_data = function(obj){
         var m_data = []
         for (var i=0;i<obj.length;i++)
@@ -78,6 +86,8 @@ var Mr = function(){
         　　obj.value = obj.value.replace(reg,'$1$2.$3'); //只能输入两个小数
     };
     var requestData = function(urlstr,parm,successCallback){
+        parm['pk'] = 12
+        parm['AccessToken']='eEYxcWZNZnIvS3grcDdWL2RpUm9hUEkrcStiOXpMc3UvUWIwRVZaazU2WT0gMTU2MDc1MTU4My43IDc0MTU1NiA4MjVjYmFlMGY3YWE5YmQ4NTQ0ZGY1ODk0MDBkNmNiYzk1MTVmNWIz'
         asyncs = true
         if (parm['async'])
             asyncs = false

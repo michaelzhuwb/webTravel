@@ -1,0 +1,7 @@
+{
+	"info":[   
+		{"head":{"logoImgAddr":"./michealMedia/images/logo.png","DscribeInfo":"供应商服务平台"}}
+    ],
+    "head":{"logoImgAddr":"./michealMedia/images/logo.png","DscribeInfo":"供应商服务平台","bgImgAddr":"123"},
+    "qrcode":{"qrCode":"./michealMedia/images/QRcode.png"}
+}
