@@ -426,18 +426,6 @@ $(document).ready(function() {
     })
 
 
-
-
-
-    var dataSets = [
-            ['Trident','Internet Explorer 5.0','Win 95+','5','C'],
-            ['Trident','Internet Explorer 5.5','Win 95+','5.5','A'],
-            ['Trident','Internet Explorer 6','Win 98+','6','A'],
-            ['Trident','Internet Explorer 7','Win XP SP2+','7','A'],
-            ['Trident','AOL browser (AOL desktop)','Win XP','6','A'],
-        ];
-
-
 // var parms = window.location.search;
 var _t = window.location.search.substring(1).replace('#','');
     x = _t.split('&')
@@ -534,8 +522,6 @@ if (1==2){
     })
 } // if
 else{
-
-
 // 签到页面表格
     $.ajax({
             type:"POST",
@@ -630,7 +616,7 @@ window.WwLogin({
             "appid" : "wxc6d740ece61b7ec1",
             "agentid" : "1000007",
             "redirect_uri" :encodeURI("https://lw.szby.cn/meetting_attend.html?pk="+_parm['pk']+''),
-            "state" : Mr.sstorage['AccessToken']+"",
+            "state" : (Mr.getParamers()['state'])?(Mr.getParamers()['state']):sstorage['AccessToken']+"",
             "href" : "",
     });
 
@@ -759,13 +745,10 @@ $('#result_up').click(function(){
 
 
 _kb_click = function(){
-        $('.materials_Bill,.totalPrice_Sort,.nav-page').removeClass('hidden');
-        $('#bid_Manage').addClass('hidden')
-
-        
+        $('.materials_Bill,.totalPrice_Sort,.nav-page').removeClass('hidden'); // 开标的界面
+        $('#bid_Manage').addClass('hidden') // 签到界面
 
         super_list = JSON.parse(Mr.sstorage['super_list'])
-        
         data_sets = JSON.parse(Mr.sstorage['data_sets'])
         header = JSON.parse(Mr.sstorage['header'])
         start_num = -1

@@ -47,25 +47,43 @@ var Mr = function(){
         sstorage.removeItem(key)
         sstorage.setItem(key,value)
     }
-    // 整数转汉字 0~9999
+    // 整数转汉字 0~99999
     var numberTochinese = function (value) { 
+
         var chnNumChar = ["零","一","二","三","四","五","六","七","八","九"]
-        var chnUnitChar = ["","十","百","千"];
+        var chnUnitChar = ["","十","百","千",'万'];
+
+        function numtocn(value,flag){
+            m_value = parseInt(value)
+            m_flag = parseInt(flag)
+            pre = chnNumChar[m_value]
+            back = chnUnitChar[m_flag]
+            if (m_value==0)
+                back = ''
+            return (pre+back)
+        }
         var _str = parseInt(value).toString()
         var str = ''
-        for(var j=_str.length;j>0;j--)
+        for (var i=_str.length-1,j=0;i>=0;i--,j++)
         {
-            str +=_str[j-1]
+            str =str + numtocn(_str[j],i)
         }
-        sstr = ''
-        for (var i=str.length;i>0;i--)
-        {
-            sstr +=chnNumChar[parseInt(str.charAt(i-1))]
-            if (chnUnitChar[i-1])
-                sstr+=chnUnitChar[i-1]
+        if (str.length>1)
+            str = str.replace(/(零+)$/,"")   // 0结尾
+        
+        function repeat(res){
+            if (/(零)\1/.test(res))
+                {
+                    _res = res.replace(/(零)\1/,"零")
+                    return repeat(_res)
+                }
+            else
+                    return res
         }
-        // alert(sstr)
-        return sstr
+        str = repeat(str)
+        if (str.length<4&&str[0]=='一'&str[1]=='十')
+            str = str.replace('一','')
+        return str
      }
      // 限制长度
     //  $('.').attr('oninput','if(value.length>5)value=value.slice(0,5);if(value>100)value=100')
@@ -99,6 +117,17 @@ var Mr = function(){
             dataType: "json",
             async:asyncs,    // 同步
             timeout : 120000, //超时时间设置，单位毫秒
+
+            beforeSend: function () {
+                // 禁用按钮 提高用户体验
+                // $("#submit").attr({ disabled: "disabled" });
+            },
+
+            success:function(res){
+                saveSesstionStorage('res',JSON.stringify(res))
+                if (successCallback)
+                    successCallback(res)
+            },
             complete:function(res,status){
                 _result=eval("("+res.responseText+")");
                 if (_result['errcode']!=0)
@@ -106,11 +135,9 @@ var Mr = function(){
                     alert(_result['errmsg'])
                 }
             },
-            success:function(res){
-                saveSesstionStorage('res',JSON.stringify(res))
-                if (successCallback)
-                    successCallback(res)
-            }
+            error: function (data) {
+                console.info("error: " + data.responseText);
+            },
          });
     }
 
