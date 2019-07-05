@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="micheal/bootstrap.min.css">
+
+<script src="micheal/jquery-3.4.1.min.js"></script>
+<script src="micheal/bootstrap.min.js"></script>
+<script src="testF/micheal_ajax.js"></script>
+<body>
+    <input class="T" type="text" value="">
+
+<script>
+    $(function(){
+        m_xz = function(obj){
+            n =3
+        　　obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
+        　　obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字而不是
+        　　obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+        　　obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            reg =  new RegExp("^(\-)*(\\d+)\.(\\d){"+n+"}(\\d)\.*$")
+            // console.log(obj.value)
+            x = new RegExp("\.(\\d){2,}$")
+            if (x.test(obj.value))
+            {
+                v = parseFloat(obj.value)
+                v = v.toString().split('.')[1]
+                v = v.substring(0,n)
+                obj.value = obj.value.replace(x,'.'+v)
+            }
+        // 　　obj.value = obj.value.replace(reg,'$1$2.$3$4'); //只能 
+            
+        }
+        $('.T').attr('onkeyup','m_xz(this)')
+
+
+    })
+</script>
+</body>
+</html>
